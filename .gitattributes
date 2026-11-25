@@ -1,0 +1,16 @@
+# Preserve binary asset bytes, including the small placeholder PDF.
+*.pdf binary
+*.glb binary
+*.gltf binary
+*.webm binary
+*.mp4 binary
+*.mov binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

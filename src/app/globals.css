@@ -1,0 +1,147 @@
+@import "tailwindcss";
+@source not "../../.tmp";
+
+@theme inline {
+  --font-sans: var(--font-sf-pro);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+
+  scroll-behavior: smooth;
+}
+
+/* Lenis supplies easing; native CSS easing must not run on top of it. */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  min-height: 100%;
+
+  font-family:
+    var(--font-sf-pro),
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-synthesis: none;
+
+  text-rendering: optimizeLegibility;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+video,
+canvas,
+svg {
+  display: block;
+}
+
+/* Typed offset keeps the shared Tailwind sliding-circle transition smooth. */
+@property --blog-orb-offset {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 96px;
+}
+
+@theme {
+  --animate-news-card-reveal: news-card-reveal 350ms ease-out both;
+  @keyframes news-card-reveal {
+    from {
+      opacity: 0;
+      translate: 0 10px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+}
+
+/* Tailwind animation tokens shared by the converted page utilities. */
+@theme {
+  --animate-migrated-166b85d89: quality-policy-enter 450ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-migrated-481f99f5f: quality-stage-enter 550ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-migrated-c542d7896: industry-hotspot-ring 3s ease-out infinite;
+  --animate-migrated-541932b35: industry-popup-enter 220ms ease-out;
+  @keyframes quality-policy-enter {
+    from {
+      opacity: 0;
+      transform: translateX(calc(18px * var(--policy-direction)));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes quality-stage-enter {
+    from {
+      opacity: 0;
+      transform: translateX(calc(24px * var(--stage-direction)));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes industry-popup-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes industry-hotspot-ring {
+    0% {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.5;
+    }
+    70%,
+    100% {
+      transform: scale(1.45);
+      opacity: 0;
+    }
+  }
+}

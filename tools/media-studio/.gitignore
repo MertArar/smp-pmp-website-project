@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+build/
+dist/
+outputs/
+*.spec
+settings.json
+build-log.txt
+desktop-build-log.txt
+.state/
