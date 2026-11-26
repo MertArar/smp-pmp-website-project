@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import ContactInteractiveMap from "./ContactInteractiveMap";
 import NewsletterSubscription from "@/components/newsletter/NewsletterSubscription";
 import useViewportVideo from "@/components/media/useViewportVideo";
 import useRepeatingTitle from "@/components/ui/useRepeatingTitle";
@@ -166,6 +167,7 @@ function MapServiceLinks({
   address: string;
   location: string;
 }) {
+  const isPlaza = address === plazaAddress;
   const destination = encodeURIComponent(
     locationCoordinates[address] ?? address,
   );
@@ -182,7 +184,7 @@ function MapServiceLinks({
         title="Yandex Maps"
       >
         <Image
-          src="/Contact/yandex.png"
+          src={isPlaza ? "/Contact/yandex-white.png" : "/Contact/yandex.png"}
           alt=""
           width={30}
           height={30}
@@ -198,7 +200,7 @@ function MapServiceLinks({
         title="Google Maps"
       >
         <Image
-          src="/Contact/google.png"
+          src={isPlaza ? "/Contact/google-white.png" : "/Contact/google.png"}
           alt=""
           width={30}
           height={30}
@@ -214,7 +216,7 @@ function MapServiceLinks({
         title="Apple Maps"
       >
         <Image
-          src="/Contact/apple.png"
+          src={isPlaza ? "/Contact/apple-white.png" : "/Contact/apple.png"}
           alt=""
           width={30}
           height={30}
@@ -234,22 +236,32 @@ function LocationMap({
   location: string;
   compact?: boolean;
 }) {
+  const isHeadquarters = address === headquartersAddress;
+
   return (
     <div
       className={twContactPage(
         `contact-location-map${compact ? " contact-location-map--compact" : ""}`,
       )}
     >
-      <Image
-        src="/contact/map.webp"
-        alt={`${location} location map`}
-        fill
-        sizes={
-          compact
-            ? "(max-width: 767px) 85vw, (max-width: 1023px) 45vw, 340px"
-            : "(max-width: 1023px) 85vw, 616px"
-        }
-      />
+      {isHeadquarters ? (
+        <ContactInteractiveMap
+          latitude={37.995635}
+          longitude={32.6233606}
+          location={location}
+        />
+      ) : (
+        <Image
+          src="/contact/map.webp"
+          alt={`${location} location map`}
+          fill
+          sizes={
+            compact
+              ? "(max-width: 767px) 85vw, (max-width: 1023px) 45vw, 340px"
+              : "(max-width: 1023px) 85vw, 616px"
+          }
+        />
+      )}
       <a
         className="contact-directions [.contact-page_&]:[position:absolute] [.contact-page_&]:[z-index:1] [.contact-page_&]:[top:calc(18_*_var(--location-unit))] [.contact-page_&]:[right:calc(18_*_var(--location-unit))] [.contact-page_&]:[display:flex]! [.contact-page_&]:[align-items:center] [.contact-page_&]:[justify-content:center] [.contact-page_&]:[gap:calc(10_*_var(--location-unit))] [.contact-page_&]:[min-height:calc(41_*_var(--location-unit))] [.contact-page_&]:[padding-top:calc(10_*_var(--location-unit))] [.contact-page_&]:[padding-right:calc(15_*_var(--location-unit))] [.contact-page_&]:[padding-bottom:calc(10_*_var(--location-unit))] [.contact-page_&]:[padding-left:calc(15_*_var(--location-unit))] [.contact-page_&]:[border:0.5px_solid_#ffffffb3] [.contact-page_&]:[border-radius:calc(12_*_var(--location-unit))] [.contact-page_&]:[background:#122c4ec4] [.contact-page_&]:[backdrop-filter:blur(12px)] [.contact-page_&]:[color:#f7f7f7]! [.contact-page_&]:[font-size:calc(12_*_var(--location-unit))]! [.contact-page_&]:[line-height:1]! [.contact-page_&]:[letter-spacing:-0.04em] [.contact-page_&]:[white-space:nowrap] [.contact-page_&]:[transition:background_200ms_ease,_box-shadow_200ms_ease] [.contact-page_&_svg]:[width:calc(20_*_var(--location-unit))] [.contact-page_&_svg]:[height:calc(20_*_var(--location-unit))] [.contact-page_&_svg]:[color:#459dff]! [.contact-page_&_svg]:[filter:drop-shadow(0_0_5px_#005effb3)] [.contact-page_&:hover]:[background:#123e6fe6] [.contact-page_&:hover]:[box-shadow:0_0_15px_#005eff40] [.contact-page_.contact-location-map--compact_&&]:[top:50%] [.contact-page_.contact-location-map--compact_&&]:[left:50%] [.contact-page_.contact-location-map--compact_&&]:[right:auto] [.contact-page_.contact-location-map--compact_&&]:[transform:translate(-50%,_-50%)] max-[768px]:[.contact-page_&]:[top:12px] max-[768px]:[.contact-page_&]:[right:12px] max-[768px]:[.contact-page_&]:[min-height:44px] max-[768px]:[.contact-page_&]:[padding-top:10px] max-[768px]:[.contact-page_&]:[padding-right:12px] max-[768px]:[.contact-page_&]:[padding-bottom:10px] max-[768px]:[.contact-page_&]:[padding-left:12px] motion-reduce:[.contact-page_&]:[transition:none] max-[768px]:[.contact-page_.contact-headquarters_&]:[top:calc(100%_+_14px)] max-[768px]:[.contact-page_.contact-headquarters_&]:[left:50%] max-[768px]:[.contact-page_.contact-headquarters_&]:[right:auto] max-[768px]:[.contact-page_.contact-headquarters_&]:[transform:translateX(-50%)] max-[768px]:[.contact-page_.contact-headquarters_&]:[min-height:36px] max-[768px]:[.contact-page_.contact-headquarters_&]:[padding-top:8px] max-[768px]:[.contact-page_.contact-headquarters_&]:[padding-right:14px] max-[768px]:[.contact-page_.contact-headquarters_&]:[padding-bottom:8px] max-[768px]:[.contact-page_.contact-headquarters_&]:[padding-left:14px] max-[768px]:[.contact-page_.contact-headquarters_&]:[border-color:#f7f7f7b3] max-[768px]:[.contact-page_.contact-headquarters_&]:[background:linear-gradient(90deg,_#ffffff40,_#7db7ff66)] max-[768px]:[.contact-page_.contact-headquarters_&]:[color:#f7f7f7]!"
         href={googleDirections(address)}
@@ -494,6 +506,29 @@ export default function ContactPage() {
             0% { opacity: 0; transform: translateX(-58vw) skewX(-18deg) scaleX(1.25); }
             28% { opacity: .55; transform: translateX(-.85em) skewX(-10deg) scaleX(1.04); }
             100% { opacity: 0; transform: none; }
+          }
+          .contact-page .contact-hero::after {
+            content: none !important;
+          }
+          .contact-page .contact-transport-card {
+            background: rgba(255, 255, 255, .13) !important;
+            border: 1px solid rgba(255, 255, 255, .3) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .19), 0 12px 30px rgba(0, 0, 0, .16) !important;
+            backdrop-filter: blur(32px) saturate(100%) !important;
+            -webkit-backdrop-filter: blur(32px) saturate(100%) !important;
+          }
+          @media (min-width: 769px) {
+            .contact-page .contact-transport-card h3,
+            .contact-page .contact-transport-card p,
+            .contact-page .contact-transport-card strong {
+              color: #f7fbff !important;
+              text-shadow: 0 1px 8px rgba(0, 0, 0, .7);
+            }
+          }
+          @media (max-width: 768px) {
+            .contact-page .contact-transport-card {
+              background: rgba(255, 255, 255, .84) !important;
+            }
           }
         `}</style>
 
