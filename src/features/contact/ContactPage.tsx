@@ -13,7 +13,6 @@ import {
   FiUpload,
   FiX,
 } from "react-icons/fi";
-import { SiGooglemaps } from "react-icons/si";
 import { LuPlane, LuTrainFront } from "react-icons/lu";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
@@ -182,13 +181,14 @@ function MapServiceLinks({
         aria-label={`${location}: Get directions with Yandex Maps`}
         title="Yandex Maps"
       >
-        <svg viewBox="0 0 30 30" aria-hidden="true">
-          <path
-            fill="#ff4433"
-            d="M15 2a10 10 0 0 0-10 10c0 7 10 16 10 16s10-9 10-16A10 10 0 0 0 15 2Z"
-          />
-          <circle cx="15" cy="12" r="4" fill="#fff" />
-        </svg>
+        <Image
+          src="/Contact/yandex.png"
+          alt=""
+          width={30}
+          height={30}
+          className="h-[calc(30_*_var(--location-unit))] w-[calc(30_*_var(--location-unit))] object-contain max-[768px]:h-6 max-[768px]:w-6"
+          aria-hidden="true"
+        />
       </a>
       <a
         href={googleDirections(address)}
@@ -197,8 +197,12 @@ function MapServiceLinks({
         aria-label={`${location}: Get directions with Google Maps`}
         title="Google Maps"
       >
-        <SiGooglemaps
-          className="contact-google-maps-icon [.contact-page_&]:[color:#34a853]!"
+        <Image
+          src="/Contact/google.png"
+          alt=""
+          width={30}
+          height={30}
+          className="h-[calc(30_*_var(--location-unit))] w-[calc(30_*_var(--location-unit))] object-contain max-[768px]:h-6 max-[768px]:w-6"
           aria-hidden="true"
         />
       </a>
@@ -209,15 +213,14 @@ function MapServiceLinks({
         aria-label={`${location}: Get directions with Apple Maps`}
         title="Apple Maps"
       >
-        <svg viewBox="0 0 30 30" aria-hidden="true">
-          <rect x="1" y="1" width="28" height="28" rx="6" fill="#f7f7f7" />
-          <path d="M1 7V7a6 6 0 0 1 6-6h8L1 18Z" fill="#70c95d" />
-          <path d="m18 1 4 28M1 23 29 9" stroke="#fff" strokeWidth="7" />
-          <path d="m18 1 4 28M1 23 29 9" stroke="#f8cb62" strokeWidth="3" />
-          <circle cx="17" cy="15" r="6" fill="#fff" />
-          <circle cx="17" cy="15" r="4.5" fill="#2689eb" />
-          <path d="m17 11-2 6 2-1 2 1Z" fill="#fff" />
-        </svg>
+        <Image
+          src="/Contact/apple.png"
+          alt=""
+          width={30}
+          height={30}
+          className="h-[calc(30_*_var(--location-unit))] w-[calc(30_*_var(--location-unit))] object-contain max-[768px]:h-6 max-[768px]:w-6"
+          aria-hidden="true"
+        />
       </a>
     </nav>
   );
