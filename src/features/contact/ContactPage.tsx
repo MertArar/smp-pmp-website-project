@@ -316,6 +316,10 @@ export default function ContactPage() {
   const [openOffice, setOpenOffice] = useState<string | null>("plaza");
   const [salesFilter, setSalesFilter] = useState<SalesFilter>("ALL");
   const salesScrollRef = useRef<HTMLDivElement>(null);
+  const [salesScrollbar, setSalesScrollbar] = useState({
+    visible: false,
+    progress: 0,
+  });
   const visibleSalesContacts = salesContacts.filter((contact) =>
     matchesSalesFilter(contact, salesFilter),
   );
@@ -391,6 +395,20 @@ export default function ContactPage() {
     // A new division starts at its first contact, even after scrolling another list.
     salesScrollRef.current?.scrollTo({ top: 0, behavior: "instant" });
   }
+  function scrollSalesToPointer(clientY: number, track: HTMLDivElement) {
+    const scroll = salesScrollRef.current;
+    if (!scroll) return;
+    const rect = track.getBoundingClientRect();
+    const thumbHeight = rect.height * 0.55;
+    const travel = rect.height - thumbHeight;
+    if (travel <= 0) return;
+    const thumbTop = Math.max(
+      0,
+      Math.min(travel, clientY - rect.top - thumbHeight / 2),
+    );
+    scroll.scrollTop =
+      (thumbTop / travel) * (scroll.scrollHeight - scroll.clientHeight);
+  }
   useEffect(() => {
     const scroll = salesScrollRef.current;
     const panel = scroll?.parentElement;
@@ -423,11 +441,26 @@ export default function ContactPage() {
       );
       scroll.style.setProperty("--sales-trailing-space", `${trailingSpace}px`);
     };
-    updateScrollLimit();
-    const observer = new ResizeObserver(updateScrollLimit);
+    const updateScrollbar = () => {
+      const scrollRange = scroll.scrollHeight - scroll.clientHeight;
+      setSalesScrollbar({
+        visible: scrollRange > 1,
+        progress: scrollRange > 1 ? scroll.scrollTop / scrollRange : 0,
+      });
+    };
+    const update = () => {
+      updateScrollLimit();
+      updateScrollbar();
+    };
+    update();
+    scroll.addEventListener("scroll", updateScrollbar, { passive: true });
+    const observer = new ResizeObserver(update);
     observer.observe(panel);
     observer.observe(lastCard);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      scroll.removeEventListener("scroll", updateScrollbar);
+    };
   }, [salesFilter]);
   return (
     <main className="contact-page font-sans [html:has(&)]:[overflow-x:clip] [body:has(&)]:[overflow-x:clip] [--contact-unit:clamp(0.71px,_0.0694444444vw,_1.777778px)] [width:100%] [min-height:100svh] [overflow-x:clip] [background:#ddeeff] [letter-spacing:0] max-[1024px]:[--contact-unit:1px] [font-weight:410]! [font-stretch:125%]! [font-variation-settings:'wght'_410,_'wdth'_125]! [font-optical-sizing:auto]">
@@ -788,6 +821,114 @@ export default function ContactPage() {
         className="contact-sales [.contact-page_&]:[--sales-unit:clamp(0.833333px,_0.0694444444vw,_1.777778px)] [.contact-page_&]:[position:relative] [.contact-page_&]:[z-index:2] [.contact-page_&]:[isolation:isolate] [.contact-page_&]:[overflow:visible] [.contact-page_&]:[padding-top:calc(66_*_var(--sales-unit))] [.contact-page_&]:[padding-right:24px] [.contact-page_&]:[padding-bottom:0] [.contact-page_&]:[padding-left:24px] [.contact-page_&]:[background:linear-gradient(90deg,_#1c2fb8_0%,_#081e63_40%,_#02111f_100%)] [.contact-page_&]:[color:#fff]! [.contact-page_&]:[letter-spacing:-0.04em] [.contact-page_&_h2]:[margin-top:0] [.contact-page_&_h2]:[margin-right:0] [.contact-page_&_h2]:[margin-bottom:calc(54_*_var(--sales-unit))] [.contact-page_&_h2]:[margin-left:0] [.contact-page_&_h2]:[color:#fff]! [.contact-page_&_h2]:[font-size:calc(50_*_var(--sales-unit))]! [.contact-page_&_h2]:[font-weight:410]! [.contact-page_&_h2]:[line-height:1]! [.contact-page_&_h2]:[text-align:center] [.contact-page_&_h2]:[letter-spacing:-0.04em] [.contact-page_&_button:focus-visible]:[outline:2px_solid_#c0e2ff] [.contact-page_&_button:focus-visible]:[outline-offset:4px] [.contact-page_&_a:focus-visible]:[outline:2px_solid_#c0e2ff] [.contact-page_&_a:focus-visible]:[outline-offset:4px] max-[1200px]:[.contact-page_&]:[--sales-unit:1px] max-[1200px]:[.contact-page_&]:[padding-top:44px] max-[1200px]:[.contact-page_&]:[padding-bottom:40px] max-[1200px]:[.contact-page_&_h2]:[margin-bottom:36px] max-[1200px]:[.contact-page_&_h2]:[font-size:clamp(28px,_8vw,_38px)]! max-[1200px]:[.contact-page_&]:[padding-right:20px] max-[1200px]:[.contact-page_&]:[padding-left:20px] max-[768px]:[.contact-page_&]:[padding-top:44px] max-[768px]:[.contact-page_&]:[padding-right:16px] max-[768px]:[.contact-page_&]:[padding-bottom:0] max-[768px]:[.contact-page_&]:[padding-left:16px] max-[768px]:[.contact-page_&_h2]:[margin-bottom:26px] max-[768px]:[.contact-page_&_h2]:[font-size:clamp(27px,_7.5vw,_34px)]!"
         aria-labelledby="contact-sales-title"
       >
+        <style>{`
+          /* Sales section typography and alignment from the Figma reference. */
+          main.contact-page .contact-sales-layout {
+            grid-template-columns: minmax(0, calc(400 * var(--sales-unit))) minmax(0, 1fr) !important;
+            gap: calc(93 * var(--sales-unit)) !important;
+          }
+          main.contact-page .contact-sales-introduction {
+            padding-top: calc(73 * var(--sales-unit)) !important;
+            padding-left: calc(63 * var(--sales-unit)) !important;
+          }
+          main.contact-page .contact-sales-description {
+            font-weight: 470 !important;
+            font-variation-settings: 'wght' 470, 'wdth' 125 !important;
+          }
+          main.contact-page .contact-sales-right {
+            min-width: 0;
+          }
+          main.contact-page .contact-sales-right #contact-sales-title {
+            margin: 0 0 calc(40 * var(--sales-unit)) calc(36 * var(--sales-unit)) !important;
+            font-size: calc(46 * var(--sales-unit)) !important;
+            font-weight: 360 !important;
+            font-variation-settings: 'wght' 360, 'wdth' 125 !important;
+            line-height: 1 !important;
+            letter-spacing: -.04em !important;
+            text-align: left !important;
+          }
+          main.contact-page .contact-sales-scroll {
+            padding-top: calc(57 * var(--sales-unit)) !important;
+            padding-right: calc(90 * var(--sales-unit)) !important;
+            padding-left: calc(36 * var(--sales-unit)) !important;
+            scrollbar-width: none !important;
+          }
+          main.contact-page .contact-sales-scroll::-webkit-scrollbar {
+            display: none !important;
+          }
+          main.contact-page .contact-sales-scrollbar {
+            position: absolute;
+            z-index: 4;
+            top: calc(60 * var(--sales-unit));
+            right: calc(43 * var(--sales-unit));
+            bottom: calc(52 * var(--sales-unit));
+            width: 6px;
+            cursor: grab;
+            touch-action: none;
+          }
+          main.contact-page .contact-sales-scrollbar:active {
+            cursor: grabbing;
+          }
+          main.contact-page .contact-sales-scrollbar::before {
+            content: '';
+            position: absolute;
+            inset: 0 auto 0 2px;
+            width: 2px;
+            border-radius: 999px;
+            background: rgba(244, 248, 255, .62);
+          }
+          main.contact-page .contact-sales-scrollbar-thumb {
+            position: absolute;
+            left: 0;
+            width: 6px;
+            height: 55%;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 0 0 4px rgba(255, 255, 255, .25);
+            pointer-events: none;
+          }
+          @media (max-width: 1200px) {
+            main.contact-page .contact-sales-layout {
+              grid-template-columns: 1fr !important;
+              gap: 32px !important;
+            }
+            main.contact-page .contact-sales-introduction {
+              padding-top: 0 !important;
+              padding-left: 0 !important;
+            }
+            main.contact-page .contact-sales-right {
+              width: 100%;
+              max-width: 640px;
+              margin-inline: auto;
+            }
+            main.contact-page .contact-sales-right #contact-sales-title {
+              margin: 0 0 26px 0 !important;
+              font-size: 38px !important;
+            }
+            main.contact-page .contact-sales-scroll {
+              padding-top: 30px !important;
+              padding-right: 46px !important;
+              padding-left: 16px !important;
+            }
+            main.contact-page .contact-sales-scrollbar {
+              top: 30px;
+              right: 18px;
+              bottom: 30px;
+            }
+          }
+          @media (max-width: 768px) {
+            main.contact-page .contact-sales-right #contact-sales-title {
+              margin-bottom: 24px !important;
+              font-size: 30px !important;
+            }
+            main.contact-page .contact-sales-scroll {
+              padding: 0 0 var(--sales-trailing-space, 728px) !important;
+            }
+            main.contact-page .contact-sales-scrollbar {
+              display: none;
+            }
+          }
+        `}</style>
         <video
           ref={earthRef}
           className="contact-sales-earth [.contact-page_&]:[position:absolute] [.contact-page_&]:[z-index:0] [.contact-page_&]:[top:0] [.contact-page_&]:[right:auto] [.contact-page_&]:[bottom:0] [.contact-page_&]:[left:-8%] [.contact-page_&]:[width:85%] [.contact-page_&]:[height:100%] [.contact-page_&]:[max-width:none] [.contact-page_&]:[object-fit:cover] [.contact-page_&]:[object-position:35%_center] [.contact-page_&]:[opacity:0.55] [.contact-page_&]:[mask-image:linear-gradient(90deg,_#000_0%,_#000_45%,_transparent_100%)] [.contact-page_&]:[pointer-events:none] max-[1200px]:[.contact-page_&]:[width:130%] max-[1200px]:[.contact-page_&]:[left:-30%] max-[1200px]:[.contact-page_&]:[opacity:0.4] motion-reduce:[.contact-page_&]:[visibility:hidden]"
@@ -810,12 +951,6 @@ export default function ContactPage() {
           aria-hidden="true"
         />
         <div className="contact-sales-inner [.contact-page_&]:[position:relative] [.contact-page_&]:[z-index:3] [.contact-page_&]:[width:100%] [.contact-page_&]:[max-width:calc(1200_*_var(--sales-unit))] [.contact-page_&]:[margin-left:auto] [.contact-page_&]:[margin-right:auto]">
-          <motion.h2
-            {...contactReveal("up", 0, reduced, 0.18)}
-            id="contact-sales-title"
-          >
-            Sales Department
-          </motion.h2>
           <div className="contact-sales-layout [.contact-page_&]:[display:grid]! [.contact-page_&]:[grid-template-columns:minmax(0,_calc(380_*_var(--sales-unit)))_minmax(0,_1fr)] [.contact-page_&]:[align-items:start] [.contact-page_&]:[gap:calc(70_*_var(--sales-unit))] max-[1200px]:[.contact-page_&]:[grid-template-columns:1fr] max-[1200px]:[.contact-page_&]:[gap:32px] max-[768px]:[.contact-page_&]:[gap:24px]">
             <motion.div
               {...contactReveal("left", 0.06, reduced, 0.18)}
@@ -860,39 +995,72 @@ export default function ContactPage() {
                 ))}
               </div>
             </motion.div>
-            <motion.div
-              {...contactReveal("right", 0.1, reduced, 0.13)}
-              className="contact-sales-panel [.contact-page_&]:[position:relative] [.contact-page_&]:[min-width:0] [.contact-page_&]:[height:calc(510_*_var(--sales-unit))] [.contact-page_&]:[margin-bottom:calc(-44_*_var(--sales-unit))] [.contact-page_&]:[overflow:hidden] [.contact-page_&]:[border:0.5px_solid_#dce6ef59] [.contact-page_&]:[border-radius:calc(30_*_var(--sales-unit))] [.contact-page_&]:[background:#7d8da047] [.contact-page_&]:[backdrop-filter:blur(24px)] [.contact-page_&]:[box-shadow:inset_0_1px_22px_#ffffff12,_0_20px_60px_#020a1e33] max-[1200px]:[.contact-page_&]:[width:100%] max-[1200px]:[.contact-page_&]:[max-width:640px] max-[1200px]:[.contact-page_&]:[height:460px] max-[1200px]:[.contact-page_&]:[margin-left:auto] max-[1200px]:[.contact-page_&]:[margin-right:auto] max-[1200px]:[.contact-page_&]:[margin-bottom:0] max-[1200px]:[.contact-page_&]:[border-radius:24px] max-[768px]:[.contact-page_&]:[height:816px] max-[768px]:[.contact-page_&]:[margin-top:0] max-[768px]:[.contact-page_&]:[margin-right:0] max-[768px]:[.contact-page_&]:[margin-bottom:0] max-[768px]:[.contact-page_&]:[margin-left:0] max-[768px]:[.contact-page_&]:[overflow:hidden] max-[768px]:[.contact-page_&]:[border:0] max-[768px]:[.contact-page_&]:[border-radius:0] max-[768px]:[.contact-page_&]:[background:transparent] max-[768px]:[.contact-page_&]:[box-shadow:none] max-[768px]:[.contact-page_&]:[backdrop-filter:none]"
-            >
-              <div
-                ref={salesScrollRef}
-                className="contact-sales-scroll [.contact-page_&]:[height:100%] [.contact-page_&]:[overflow-y:auto] [.contact-page_&]:[overflow-x:hidden] [.contact-page_&]:[padding-top:calc(30_*_var(--sales-unit))] [.contact-page_&]:[padding-right:calc(30_*_var(--sales-unit))] [.contact-page_&]:[padding-bottom:var(--sales-trailing-space,_calc(106_*_var(--sales-unit)))] [.contact-page_&]:[padding-left:calc(30_*_var(--sales-unit))] [.contact-page_&]:[scrollbar-width:thin] [.contact-page_&]:[scrollbar-color:#f7f7f7b3_#ffffff0a] [.contact-page_&]:[overscroll-behavior-y:auto] [.contact-page_&]:[scrollbar-gutter:stable] [.contact-page_&::-webkit-scrollbar]:[width:5px] [.contact-page_&::-webkit-scrollbar-track]:[background:#ffffff0a] [.contact-page_&::-webkit-scrollbar-thumb]:[border-radius:20px] [.contact-page_&::-webkit-scrollbar-thumb]:[background:#f7f7f7b3] [.contact-page_&:focus-visible]:[outline:2px_solid_#c0e2ff] [.contact-page_&:focus-visible]:[outline-offset:-4px] [.contact-page_&:focus-visible]:[border-radius:inherit] max-[1200px]:[.contact-page_&]:[padding-left:16px] max-[1200px]:[.contact-page_&]:[padding-right:16px] max-[1200px]:[.contact-page_&]:[padding-top:20px] max-[1200px]:[.contact-page_&]:[padding-bottom:var(--sales-trailing-space,_96px)] max-[768px]:[.contact-page_&]:[height:100%] max-[768px]:[.contact-page_&]:[padding-top:0] max-[768px]:[.contact-page_&]:[padding-right:0] max-[768px]:[.contact-page_&]:[padding-bottom:var(--sales-trailing-space,_728px)] max-[768px]:[.contact-page_&]:[padding-left:0] max-[768px]:[.contact-page_&]:[overflow-y:auto] max-[768px]:[.contact-page_&]:[overflow-x:hidden] max-[768px]:[.contact-page_&]:[scrollbar-gutter:auto]"
-                role="region"
-                aria-label="Sales department contacts"
-                tabIndex={0}
+            <div className="contact-sales-right">
+              <motion.h2
+                {...contactReveal("up", 0, reduced, 0.18)}
+                id="contact-sales-title"
               >
-                <ul
-                  id="contact-sales-list"
-                  className="contact-sales-grid [.contact-page_&]:[display:grid]! [.contact-page_&]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [.contact-page_&]:[gap:calc(12_*_var(--sales-unit))] [.contact-page_&]:[margin-top:0] [.contact-page_&]:[margin-right:0] [.contact-page_&]:[margin-bottom:0] [.contact-page_&]:[margin-left:0] [.contact-page_&]:[padding-top:0] [.contact-page_&]:[padding-right:0] [.contact-page_&]:[padding-bottom:0] [.contact-page_&]:[padding-left:0] [.contact-page_&]:[list-style:none] max-[1200px]:[.contact-page_&]:[grid-template-columns:1fr] max-[1200px]:[.contact-page_&]:[gap:12px] max-[768px]:[.contact-page_&]:[grid-template-columns:1fr] max-[768px]:[.contact-page_&]:[gap:8px]"
-                  aria-label={`${salesFilter} sales contacts`}
+                Sales Department
+              </motion.h2>
+              <motion.div
+                {...contactReveal("right", 0.1, reduced, 0.13)}
+                className="contact-sales-panel [.contact-page_&]:[position:relative] [.contact-page_&]:[min-width:0] [.contact-page_&]:[height:calc(510_*_var(--sales-unit))] [.contact-page_&]:[margin-bottom:calc(-44_*_var(--sales-unit))] [.contact-page_&]:[overflow:hidden] [.contact-page_&]:[border:0.5px_solid_#dce6ef59] [.contact-page_&]:[border-radius:calc(30_*_var(--sales-unit))] [.contact-page_&]:[background:#7d8da047] [.contact-page_&]:[backdrop-filter:blur(24px)] [.contact-page_&]:[box-shadow:inset_0_1px_22px_#ffffff12,_0_20px_60px_#020a1e33] max-[1200px]:[.contact-page_&]:[width:100%] max-[1200px]:[.contact-page_&]:[max-width:640px] max-[1200px]:[.contact-page_&]:[height:460px] max-[1200px]:[.contact-page_&]:[margin-left:auto] max-[1200px]:[.contact-page_&]:[margin-right:auto] max-[1200px]:[.contact-page_&]:[margin-bottom:0] max-[1200px]:[.contact-page_&]:[border-radius:24px] max-[768px]:[.contact-page_&]:[height:816px] max-[768px]:[.contact-page_&]:[margin-top:0] max-[768px]:[.contact-page_&]:[margin-right:0] max-[768px]:[.contact-page_&]:[margin-bottom:0] max-[768px]:[.contact-page_&]:[margin-left:0] max-[768px]:[.contact-page_&]:[overflow:hidden] max-[768px]:[.contact-page_&]:[border:0] max-[768px]:[.contact-page_&]:[border-radius:0] max-[768px]:[.contact-page_&]:[background:transparent] max-[768px]:[.contact-page_&]:[box-shadow:none] max-[768px]:[.contact-page_&]:[backdrop-filter:none]"
+              >
+                <div
+                  ref={salesScrollRef}
+                  className="contact-sales-scroll [.contact-page_&]:[height:100%] [.contact-page_&]:[overflow-y:auto] [.contact-page_&]:[overflow-x:hidden] [.contact-page_&]:[padding-top:calc(30_*_var(--sales-unit))] [.contact-page_&]:[padding-right:calc(30_*_var(--sales-unit))] [.contact-page_&]:[padding-bottom:var(--sales-trailing-space,_calc(106_*_var(--sales-unit)))] [.contact-page_&]:[padding-left:calc(30_*_var(--sales-unit))] [.contact-page_&]:[scrollbar-width:thin] [.contact-page_&]:[scrollbar-color:#f7f7f7b3_#ffffff0a] [.contact-page_&]:[overscroll-behavior-y:auto] [.contact-page_&]:[scrollbar-gutter:stable] [.contact-page_&::-webkit-scrollbar]:[width:5px] [.contact-page_&::-webkit-scrollbar-track]:[background:#ffffff0a] [.contact-page_&::-webkit-scrollbar-thumb]:[border-radius:20px] [.contact-page_&::-webkit-scrollbar-thumb]:[background:#f7f7f7b3] [.contact-page_&:focus-visible]:[outline:2px_solid_#c0e2ff] [.contact-page_&:focus-visible]:[outline-offset:-4px] [.contact-page_&:focus-visible]:[border-radius:inherit] max-[1200px]:[.contact-page_&]:[padding-left:16px] max-[1200px]:[.contact-page_&]:[padding-right:16px] max-[1200px]:[.contact-page_&]:[padding-top:20px] max-[1200px]:[.contact-page_&]:[padding-bottom:var(--sales-trailing-space,_96px)] max-[768px]:[.contact-page_&]:[height:100%] max-[768px]:[.contact-page_&]:[padding-top:0] max-[768px]:[.contact-page_&]:[padding-right:0] max-[768px]:[.contact-page_&]:[padding-bottom:var(--sales-trailing-space,_728px)] max-[768px]:[.contact-page_&]:[padding-left:0] max-[768px]:[.contact-page_&]:[overflow-y:auto] max-[768px]:[.contact-page_&]:[overflow-x:hidden] max-[768px]:[.contact-page_&]:[scrollbar-gutter:auto]"
+                  role="region"
+                  aria-label="Sales department contacts"
+                  tabIndex={0}
                 >
-                  {visibleSalesContacts.map((contact) => (
-                    <li
-                      key={contact.email}
-                      className="contact-sales-person [.contact-page_&]:[display:flex]! [.contact-page_&]:[flex-direction:column] [.contact-page_&]:[align-items:flex-start] [.contact-page_&]:[gap:calc(10_*_var(--sales-unit))] [.contact-page_&]:[min-width:0] [.contact-page_&]:[min-height:calc(116_*_var(--sales-unit))] [.contact-page_&]:[padding-top:calc(16_*_var(--sales-unit))] [.contact-page_&]:[padding-right:calc(16_*_var(--sales-unit))] [.contact-page_&]:[padding-bottom:calc(16_*_var(--sales-unit))] [.contact-page_&]:[padding-left:calc(16_*_var(--sales-unit))] [.contact-page_&]:[border:0.5px_solid_#dce6ef33] [.contact-page_&]:[border-radius:calc(10_*_var(--sales-unit))] [.contact-page_&]:[background:#ffffff17] [.contact-page_&]:[box-shadow:inset_0_1px_10px_#ffffff08] [.contact-page_&]:[transition:background_220ms_ease,_border-color_220ms_ease] [.contact-page_&:hover]:[background:#ffffff24] [.contact-page_&:hover]:[border-color:#dce6ef66] [.contact-page_&_h3]:[margin-top:0] [.contact-page_&_h3]:[margin-right:0] [.contact-page_&_h3]:[margin-bottom:0] [.contact-page_&_h3]:[margin-left:0] [.contact-page_&_h3]:[color:#fff]! [.contact-page_&_h3]:[font-size:calc(16_*_var(--sales-unit))]! [.contact-page_&_h3]:[font-weight:540]! [.contact-page_&_h3]:[font-variation-settings:'wght'_540,_'wdth'_125]! [.contact-page_&_h3]:[line-height:1.15]! [.contact-page_&_h3]:[letter-spacing:-0.04em] [.contact-page_&_p]:[margin-top:0] [.contact-page_&_p]:[margin-right:0] [.contact-page_&_p]:[margin-bottom:0] [.contact-page_&_p]:[margin-left:0] [.contact-page_&_p]:[color:#dce6efb3]! [.contact-page_&_p]:[font-size:calc(12_*_var(--sales-unit))]! [.contact-page_&_p]:[line-height:1.25]! [.contact-page_&_a]:[margin-top:auto] [.contact-page_&_a]:[max-width:100%] [.contact-page_&_a]:[color:#eef6ff]! [.contact-page_&_a]:[font-size:calc(12_*_var(--sales-unit))]! [.contact-page_&_a]:[line-height:1.2]! [.contact-page_&_a]:[overflow-wrap:anywhere] [.contact-page_&_a:hover]:[color:#fff]! [.contact-page_&_a:hover]:[text-decoration:underline]! [.contact-page_&_a:hover]:[text-underline-offset:3px] max-[1200px]:[.contact-page_&]:[padding-top:16px] max-[1200px]:[.contact-page_&]:[padding-right:16px] max-[1200px]:[.contact-page_&]:[padding-bottom:16px] max-[1200px]:[.contact-page_&]:[padding-left:16px] max-[1200px]:[.contact-page_&]:[min-height:112px] max-[1200px]:[.contact-page_&_h3]:[font-size:15px]! max-[1200px]:[.contact-page_&_p]:[font-size:12px]! max-[1200px]:[.contact-page_&_a]:[font-size:12px]! motion-reduce:[.contact-page_&]:[transition:none] max-[768px]:[.contact-page_&]:[min-height:88px] max-[768px]:[.contact-page_&]:[padding-top:12px] max-[768px]:[.contact-page_&]:[padding-right:14px] max-[768px]:[.contact-page_&]:[padding-bottom:12px] max-[768px]:[.contact-page_&]:[padding-left:14px] max-[768px]:[.contact-page_&]:[gap:7px] max-[768px]:[.contact-page_&_h3]:[font-size:20px]! max-[768px]:[.contact-page_&_h3]:[font-weight:410]! max-[768px]:[.contact-page_&_h3]:[font-variation-settings:'wght'_410,_'wdth'_125]! max-[768px]:[.contact-page_&_h3]:[line-height:1.07]! max-[768px]:[.contact-page_&_h3]:[letter-spacing:-0.04em] max-[768px]:[.contact-page_&_p]:[font-size:9px]! max-[768px]:[.contact-page_&_p]:[font-weight:410]! max-[768px]:[.contact-page_&_p]:[line-height:1.12]! max-[768px]:[.contact-page_&_p]:[letter-spacing:-0.04em] max-[768px]:[.contact-page_&_p]:[color:#fff]! max-[768px]:[.contact-page_&_a]:[font-size:12px]! max-[768px]:[.contact-page_&_a]:[font-weight:410]! max-[768px]:[.contact-page_&_a]:[line-height:1.12]! max-[768px]:[.contact-page_&_a]:[letter-spacing:-0.04em] max-[768px]:[.contact-page_&_a]:[color:#fff]!"
-                    >
-                      <h3>{contact.name}</h3>
-                      <p>{contact.role}</p>
-                      <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div
-                className="contact-sales-panel-fade [.contact-page_&]:[position:absolute] [.contact-page_&]:[z-index:2] [.contact-page_&]:[bottom:0] [.contact-page_&]:[left:0] [.contact-page_&]:[right:10px] [.contact-page_&]:[height:calc(88_*_var(--sales-unit))] [.contact-page_&]:[border-radius:0_0_calc(30_*_var(--sales-unit))_calc(30_*_var(--sales-unit))] [.contact-page_&]:[background:linear-gradient(180deg,_#dce6ef00,_#dce6ef45_45%,_#dce6efa6_100%)] [.contact-page_&]:[backdrop-filter:blur(6px)] [.contact-page_&]:[mask-image:linear-gradient(180deg,_transparent,_#000_70%)] [.contact-page_&]:[pointer-events:none] max-[1200px]:[.contact-page_&]:[height:80px] max-[1200px]:[.contact-page_&]:[border-radius:0_0_24px_24px] max-[768px]:[.contact-page_&]:[display:block]! max-[768px]:[.contact-page_&]:[bottom:0] max-[768px]:[.contact-page_&]:[left:0] max-[768px]:[.contact-page_&]:[right:0] max-[768px]:[.contact-page_&]:[height:160px] max-[768px]:[.contact-page_&]:[border-radius:0] max-[768px]:[.contact-page_&]:[background:linear-gradient(180deg,_transparent,_#02111f20)] max-[768px]:[.contact-page_&]:[backdrop-filter:blur(4px)] max-[768px]:[.contact-page_&]:[mask-image:linear-gradient(180deg,_transparent,_#000_40%)]"
-                aria-hidden="true"
-              />
-            </motion.div>
+                  <ul
+                    id="contact-sales-list"
+                    className="contact-sales-grid [.contact-page_&]:[display:grid]! [.contact-page_&]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] [.contact-page_&]:[gap:calc(12_*_var(--sales-unit))] [.contact-page_&]:[margin-top:0] [.contact-page_&]:[margin-right:0] [.contact-page_&]:[margin-bottom:0] [.contact-page_&]:[margin-left:0] [.contact-page_&]:[padding-top:0] [.contact-page_&]:[padding-right:0] [.contact-page_&]:[padding-bottom:0] [.contact-page_&]:[padding-left:0] [.contact-page_&]:[list-style:none] max-[1200px]:[.contact-page_&]:[grid-template-columns:1fr] max-[1200px]:[.contact-page_&]:[gap:12px] max-[768px]:[.contact-page_&]:[grid-template-columns:1fr] max-[768px]:[.contact-page_&]:[gap:8px]"
+                    aria-label={`${salesFilter} sales contacts`}
+                  >
+                    {visibleSalesContacts.map((contact) => (
+                      <li
+                        key={contact.email}
+                        className="contact-sales-person [.contact-page_&]:[display:flex]! [.contact-page_&]:[flex-direction:column] [.contact-page_&]:[align-items:flex-start] [.contact-page_&]:[gap:calc(10_*_var(--sales-unit))] [.contact-page_&]:[min-width:0] [.contact-page_&]:[min-height:calc(116_*_var(--sales-unit))] [.contact-page_&]:[padding-top:calc(16_*_var(--sales-unit))] [.contact-page_&]:[padding-right:calc(16_*_var(--sales-unit))] [.contact-page_&]:[padding-bottom:calc(16_*_var(--sales-unit))] [.contact-page_&]:[padding-left:calc(16_*_var(--sales-unit))] [.contact-page_&]:[border:0.5px_solid_#dce6ef33] [.contact-page_&]:[border-radius:calc(10_*_var(--sales-unit))] [.contact-page_&]:[background:#ffffff17] [.contact-page_&]:[box-shadow:inset_0_1px_10px_#ffffff08] [.contact-page_&]:[transition:background_220ms_ease,_border-color_220ms_ease] [.contact-page_&:hover]:[background:#ffffff24] [.contact-page_&:hover]:[border-color:#dce6ef66] [.contact-page_&_h3]:[margin-top:0] [.contact-page_&_h3]:[margin-right:0] [.contact-page_&_h3]:[margin-bottom:0] [.contact-page_&_h3]:[margin-left:0] [.contact-page_&_h3]:[color:#fff]! [.contact-page_&_h3]:[font-size:calc(16_*_var(--sales-unit))]! [.contact-page_&_h3]:[font-weight:540]! [.contact-page_&_h3]:[font-variation-settings:'wght'_540,_'wdth'_125]! [.contact-page_&_h3]:[line-height:1.15]! [.contact-page_&_h3]:[letter-spacing:-0.04em] [.contact-page_&_p]:[margin-top:0] [.contact-page_&_p]:[margin-right:0] [.contact-page_&_p]:[margin-bottom:0] [.contact-page_&_p]:[margin-left:0] [.contact-page_&_p]:[color:#dce6efb3]! [.contact-page_&_p]:[font-size:calc(12_*_var(--sales-unit))]! [.contact-page_&_p]:[line-height:1.25]! [.contact-page_&_a]:[margin-top:auto] [.contact-page_&_a]:[max-width:100%] [.contact-page_&_a]:[color:#eef6ff]! [.contact-page_&_a]:[font-size:calc(12_*_var(--sales-unit))]! [.contact-page_&_a]:[line-height:1.2]! [.contact-page_&_a]:[overflow-wrap:anywhere] [.contact-page_&_a:hover]:[color:#fff]! [.contact-page_&_a:hover]:[text-decoration:underline]! [.contact-page_&_a:hover]:[text-underline-offset:3px] max-[1200px]:[.contact-page_&]:[padding-top:16px] max-[1200px]:[.contact-page_&]:[padding-right:16px] max-[1200px]:[.contact-page_&]:[padding-bottom:16px] max-[1200px]:[.contact-page_&]:[padding-left:16px] max-[1200px]:[.contact-page_&]:[min-height:112px] max-[1200px]:[.contact-page_&_h3]:[font-size:15px]! max-[1200px]:[.contact-page_&_p]:[font-size:12px]! max-[1200px]:[.contact-page_&_a]:[font-size:12px]! motion-reduce:[.contact-page_&]:[transition:none] max-[768px]:[.contact-page_&]:[min-height:88px] max-[768px]:[.contact-page_&]:[padding-top:12px] max-[768px]:[.contact-page_&]:[padding-right:14px] max-[768px]:[.contact-page_&]:[padding-bottom:12px] max-[768px]:[.contact-page_&]:[padding-left:14px] max-[768px]:[.contact-page_&]:[gap:7px] max-[768px]:[.contact-page_&_h3]:[font-size:20px]! max-[768px]:[.contact-page_&_h3]:[font-weight:410]! max-[768px]:[.contact-page_&_h3]:[font-variation-settings:'wght'_410,_'wdth'_125]! max-[768px]:[.contact-page_&_h3]:[line-height:1.07]! max-[768px]:[.contact-page_&_h3]:[letter-spacing:-0.04em] max-[768px]:[.contact-page_&_p]:[font-size:9px]! max-[768px]:[.contact-page_&_p]:[font-weight:410]! max-[768px]:[.contact-page_&_p]:[line-height:1.12]! max-[768px]:[.contact-page_&_p]:[letter-spacing:-0.04em] max-[768px]:[.contact-page_&_p]:[color:#fff]! max-[768px]:[.contact-page_&_a]:[font-size:12px]! max-[768px]:[.contact-page_&_a]:[font-weight:410]! max-[768px]:[.contact-page_&_a]:[line-height:1.12]! max-[768px]:[.contact-page_&_a]:[letter-spacing:-0.04em] max-[768px]:[.contact-page_&_a]:[color:#fff]!"
+                      >
+                        <h3>{contact.name}</h3>
+                        <p>{contact.role}</p>
+                        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div
+                  className="contact-sales-panel-fade [.contact-page_&]:[position:absolute] [.contact-page_&]:[z-index:2] [.contact-page_&]:[bottom:0] [.contact-page_&]:[left:0] [.contact-page_&]:[right:10px] [.contact-page_&]:[height:calc(88_*_var(--sales-unit))] [.contact-page_&]:[border-radius:0_0_calc(30_*_var(--sales-unit))_calc(30_*_var(--sales-unit))] [.contact-page_&]:[background:linear-gradient(180deg,_#dce6ef00,_#dce6ef45_45%,_#dce6efa6_100%)] [.contact-page_&]:[backdrop-filter:blur(6px)] [.contact-page_&]:[mask-image:linear-gradient(180deg,_transparent,_#000_70%)] [.contact-page_&]:[pointer-events:none] max-[1200px]:[.contact-page_&]:[height:80px] max-[1200px]:[.contact-page_&]:[border-radius:0_0_24px_24px] max-[768px]:[.contact-page_&]:[display:block]! max-[768px]:[.contact-page_&]:[bottom:0] max-[768px]:[.contact-page_&]:[left:0] max-[768px]:[.contact-page_&]:[right:0] max-[768px]:[.contact-page_&]:[height:160px] max-[768px]:[.contact-page_&]:[border-radius:0] max-[768px]:[.contact-page_&]:[background:linear-gradient(180deg,_transparent,_#02111f20)] max-[768px]:[.contact-page_&]:[backdrop-filter:blur(4px)] max-[768px]:[.contact-page_&]:[mask-image:linear-gradient(180deg,_transparent,_#000_40%)]"
+                  aria-hidden="true"
+                />
+                {salesScrollbar.visible && (
+                  <div
+                    className="contact-sales-scrollbar"
+                    aria-hidden="true"
+                    onPointerDown={(event) => {
+                      event.currentTarget.setPointerCapture(event.pointerId);
+                      scrollSalesToPointer(event.clientY, event.currentTarget);
+                    }}
+                    onPointerMove={(event) => {
+                      if (
+                        event.currentTarget.hasPointerCapture(event.pointerId)
+                      ) {
+                        scrollSalesToPointer(
+                          event.clientY,
+                          event.currentTarget,
+                        );
+                      }
+                    }}
+                  >
+                    <span
+                      className="contact-sales-scrollbar-thumb"
+                      style={{ top: `${salesScrollbar.progress * 45}%` }}
+                    />
+                  </div>
+                )}
+              </motion.div>
+            </div>
           </div>
           <p
             className="sr-only"

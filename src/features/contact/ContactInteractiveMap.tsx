@@ -120,7 +120,6 @@ export default function ContactInteractiveMap({
       });
       leafletMap = map;
       mapRef.current = map;
-      L.control.zoom({ position: "bottomleft" }).addTo(map);
 
       const headquarters = L.latLng(latitude, longitude);
       const updateReturnButton = () => {
@@ -388,21 +387,6 @@ export default function ContactInteractiveMap({
           filter: drop-shadow(0 0 0.55px rgba(255,255,255,0.9))
                   drop-shadow(0 0 1.2px rgba(238,245,255,0.75))
                   drop-shadow(0 0 1.8px rgba(186,213,255,0.38));
-        }
-        .contact-live-map .leaflet-control-zoom {
-          border: 1px solid rgba(228,238,255,0.35);
-          border-radius: 9px;
-          overflow: hidden;
-          box-shadow: 0 3px 14px rgba(0,0,0,0.25);
-        }
-        .contact-live-map .leaflet-control-zoom a {
-          background: rgba(13,25,42,0.88);
-          color: #ebf3ff;
-          border-color: rgba(210,225,255,0.2);
-        }
-        .contact-live-map .leaflet-control-zoom a:hover {
-          background: #12345d;
-          color: #fff;
         }
         .contact-live-map .sempa-map-label {
           color: rgba(199,207,216,0.73);
