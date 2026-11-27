@@ -653,10 +653,18 @@ function DesktopStackCards() {
 
     const styleValues = new WeakMap<HTMLElement, Map<string, string>>();
     const contentProgress = new WeakMap<HTMLElement, number>();
-    const writeStyle = (element: HTMLElement, property: string, value: string) => {
+    const writeStyle = (
+      element: HTMLElement,
+      property: string,
+      value: string,
+    ) => {
       let values = styleValues.get(element);
-      if (!values) { values = new Map(); styleValues.set(element, values); }
-      if (!values.has(property)) values.set(property, element.style.getPropertyValue(property));
+      if (!values) {
+        values = new Map();
+        styleValues.set(element, values);
+      }
+      if (!values.has(property))
+        values.set(property, element.style.getPropertyValue(property));
       if (values.get(property) === value) return;
       element.style.setProperty(property, value);
       values.set(property, value);
@@ -702,11 +710,19 @@ function DesktopStackCards() {
       } = options;
 
       const anchor = CARD_SLOTS[cardIndex];
-      writeStyle(element, "transform", `translate3d(${geometry.x - anchor.x}px, ${geometry.y - anchor.y + translateY}px, 0)`);
+      writeStyle(
+        element,
+        "transform",
+        `translate3d(${geometry.x - anchor.x}px, ${geometry.y - anchor.y + translateY}px, 0)`,
+      );
       writeStyle(element, "width", `${geometry.width}px`);
       writeStyle(element, "height", `${geometry.height}px`);
       writeStyle(element, "border-radius", `${geometry.radius}px`);
-      writeStyle(element, "filter", geometry.blur > 0.01 ? `blur(${geometry.blur}px)` : "none");
+      writeStyle(
+        element,
+        "filter",
+        geometry.blur > 0.01 ? `blur(${geometry.blur}px)` : "none",
+      );
       writeStyle(element, "opacity", String(opacity));
       writeStyle(element, "z-index", String(zIndex));
 
@@ -752,10 +768,7 @@ function DesktopStackCards() {
 
         writeStyle(element, "--card-heading-size", `${headingSize}px`);
 
-        writeStyle(element,
-          "--card-heading-weight",
-          String(headingWeight),
-        );
+        writeStyle(element, "--card-heading-weight", String(headingWeight));
 
         /* -----------------------------------------------
            IMAGE INTERPOLATION
@@ -877,7 +890,9 @@ function DesktopStackCards() {
     ----------------------------------------------------- */
 
     const transitions = CARDS.length - 1;
-    const isPinned = () => window.scrollY >= sectionTop - 1 && window.scrollY <= sectionTop + scrollDistance + 1;
+    const isPinned = () =>
+      window.scrollY >= sectionTop - 1 &&
+      window.scrollY <= sectionTop + scrollDistance + 1;
     const measure = () => {
       sectionTop = section.getBoundingClientRect().top + window.scrollY;
       scrollDistance = Math.max(section.offsetHeight - window.innerHeight, 1);
@@ -895,7 +910,9 @@ function DesktopStackCards() {
     const animate = (time: number) => {
       animationFrame = null;
       if (!transition || disposed) return;
-      const elapsed = reducedMotion ? 1 : clamp((time - transition.started) / CONFIG.transitionDuration);
+      const elapsed = reducedMotion
+        ? 1
+        : clamp((time - transition.started) / CONFIG.transitionDuration);
       // applyProgress retains the original smoothstep geometry, blur and exit path.
       renderProgress(lerp(transition.from, transition.to, elapsed));
       movePage();
@@ -907,8 +924,13 @@ function DesktopStackCards() {
     };
     const goToCard = (index: number) => {
       stopSmoothScroll();
-      transition = { from: currentProgress, to: index / transitions, started: performance.now() };
-      if (animationFrame === null) animationFrame = requestAnimationFrame(animate);
+      transition = {
+        from: currentProgress,
+        to: index / transitions,
+        started: performance.now(),
+      };
+      if (animationFrame === null)
+        animationFrame = requestAnimationFrame(animate);
     };
     const step = (direction: number) => {
       if (!isPinned()) return false;
@@ -929,14 +951,40 @@ function DesktopStackCards() {
       }
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey || event.altKey || (event.target as HTMLElement).closest("a,button,input,textarea,select,[contenteditable='true']")) return;
-      const direction = event.key === "ArrowDown" || event.key === "PageDown" || (event.key === " " && !event.shiftKey)
-        ? 1 : event.key === "ArrowUp" || event.key === "PageUp" || (event.key === " " && event.shiftKey) ? -1 : 0;
-      if (direction && isPinned() && (transition || (event.repeat ? settledIndex > 0 && settledIndex < transitions : step(direction)))) event.preventDefault();
+      if (
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey ||
+        (event.target as HTMLElement).closest(
+          "a,button,input,textarea,select,[contenteditable='true']",
+        )
+      )
+        return;
+      const direction =
+        event.key === "ArrowDown" ||
+        event.key === "PageDown" ||
+        (event.key === " " && !event.shiftKey)
+          ? 1
+          : event.key === "ArrowUp" ||
+              event.key === "PageUp" ||
+              (event.key === " " && event.shiftKey)
+            ? -1
+            : 0;
+      if (
+        direction &&
+        isPinned() &&
+        (transition ||
+          (event.repeat
+            ? settledIndex > 0 && settledIndex < transitions
+            : step(direction)))
+      )
+        event.preventDefault();
     };
     const onTouchStart = (event: TouchEvent) => {
       const touch = event.touches.length === 1 ? event.touches[0] : undefined;
-      touchStart = touch ? { x: touch.clientX, y: touch.clientY, consumed: false } : null;
+      touchStart = touch
+        ? { x: touch.clientX, y: touch.clientY, consumed: false }
+        : null;
     };
     const onTouchMove = (event: TouchEvent) => {
       if (!touchStart || event.touches.length !== 1 || !isPinned()) return;
@@ -949,7 +997,9 @@ function DesktopStackCards() {
         touchStart.consumed = true;
       }
     };
-    const onTouchEnd = () => { touchStart = null; };
+    const onTouchEnd = () => {
+      touchStart = null;
+    };
     const requestUpdate = () => {
       if (transition || disposed) return;
       const position = window.scrollY;
@@ -960,7 +1010,12 @@ function DesktopStackCards() {
       renderProgress(raw);
       if (isPinned()) {
         // Scrollbar dragging and navigation also settle on a whole card.
-        const index = direction > 0 ? Math.ceil(raw * transitions) : direction < 0 ? Math.floor(raw * transitions) : Math.round(raw * transitions);
+        const index =
+          direction > 0
+            ? Math.ceil(raw * transitions)
+            : direction < 0
+              ? Math.floor(raw * transitions)
+              : Math.round(raw * transitions);
         goToCard(clamp(index, 0, transitions));
       } else settledIndex = Math.round(raw * transitions);
     };
@@ -971,19 +1026,30 @@ function DesktopStackCards() {
       if (transition && pinned) movePage();
       else requestUpdate();
     };
-    const handleReducedMotion = () => { reducedMotion = reducedMotionQuery.matches; };
+    const handleReducedMotion = () => {
+      reducedMotion = reducedMotionQuery.matches;
+    };
 
     measure();
     currentProgress = clamp((window.scrollY - sectionTop) / scrollDistance);
     settledIndex = Math.round(currentProgress * transitions);
     renderProgress(currentProgress);
-    if (isPinned() && Math.abs(currentProgress * transitions - settledIndex) > CONFIG.precision) goToCard(settledIndex);
+    if (
+      isPinned() &&
+      Math.abs(currentProgress * transitions - settledIndex) > CONFIG.precision
+    )
+      goToCard(settledIndex);
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(section);
     if (section.parentElement) resizeObserver.observe(section.parentElement);
-    void document.fonts.ready.then(() => { if (!disposed) handleResize(); });
+    void document.fonts.ready.then(() => {
+      if (!disposed) handleResize();
+    });
     window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    window.addEventListener("wheel", onWheel, {
+      passive: false,
+      capture: true,
+    });
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });

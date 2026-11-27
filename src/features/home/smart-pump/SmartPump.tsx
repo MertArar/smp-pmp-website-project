@@ -15,8 +15,50 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FiArrowUpRight } from "react-icons/fi";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// AboutUsPage-style reveals. GSAP keeps exclusive control of the moving cards.
+const revealVariants: Variants = {
+  hidden: ({
+    direction = "up",
+    reduced = false,
+  }: {
+    direction?: "up" | "left" | "right";
+    reduced?: boolean;
+  }) => ({
+    opacity: reduced ? 1 : 0,
+    x: reduced
+      ? 0
+      : direction === "left"
+        ? -34
+        : direction === "right"
+          ? 34
+          : 0,
+    y: reduced ? 0 : direction === "up" ? 34 : 0,
+  }),
+  visible: { opacity: 1, x: 0, y: 0 },
+};
+
+function reveal(
+  direction: "up" | "left" | "right" = "up",
+  delay = 0,
+  reduced = false,
+) {
+  return {
+    variants: revealVariants,
+    custom: { direction, reduced },
+    initial: "hidden" as const,
+    whileInView: "visible" as const,
+    viewport: { once: false, amount: 0.38, margin: "0px 0px -14% 0px" },
+    transition: {
+      duration: reduced ? 0 : 0.95,
+      delay: reduced ? 0 : delay,
+      ease: [0.25, 0.85, 0.3, 1] as [number, number, number, number],
+    },
+  };
+}
 
 /* Design reference: Figma 1440px -> desktop 1920px */
 
@@ -330,7 +372,7 @@ function SmartPumpCloud() {
   );
 }
 
-function SmartPumpRobotHand() {
+function SmartPumpRobotHand({ reducedMotion }: { reducedMotion: boolean }) {
   const sharpMask = `linear-gradient(90deg, black 0%, black ${ROBOT_BLUR.sharpUntil}%, transparent ${ROBOT_BLUR.blurFullAt}%, transparent 100%)`;
 
   const softBlurMask = `linear-gradient(90deg, transparent 0%, transparent ${ROBOT_BLUR.sharpUntil}%, black ${ROBOT_BLUR.blurFullAt}%, black 100%)`;
@@ -349,7 +391,8 @@ function SmartPumpRobotHand() {
   );
 
   return (
-    <div
+    <motion.div
+      {...reveal("right", 0.2, reducedMotion)}
       aria-hidden="true"
       className="pointer-events-none absolute"
       style={{
@@ -396,7 +439,7 @@ function SmartPumpRobotHand() {
       >
         <div className="relative h-full w-full">{robotImage}</div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -460,9 +503,10 @@ function SmartPumpCurveLine() {
   );
 }
 
-function SmartPumpHeading() {
+function SmartPumpHeading({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <h1
+    <motion.h1
+      {...reveal("left", 0, reducedMotion)}
       className="absolute z-10 m-0 bg-clip-text text-transparent"
       style={{
         ...headingFont,
@@ -491,13 +535,14 @@ function SmartPumpHeading() {
       <span className="block whitespace-nowrap">Smart Pump</span>
 
       <span className="block whitespace-nowrap">Selection Assistant</span>
-    </h1>
+    </motion.h1>
   );
 }
 
-function SmartPumpDescription() {
+function SmartPumpDescription({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <p
+    <motion.p
+      {...reveal("right", 0.16, reducedMotion)}
       className="absolute z-10 m-0"
       style={{
         ...descriptionFont,
@@ -523,13 +568,18 @@ function SmartPumpDescription() {
       technical parameters such as flow rate, pressure, and fluid type, and let
       our advanced configurator select the ideal Sempa pump for your specific
       industry needs.
-    </p>
+    </motion.p>
   );
 }
 
-function SmartPumpSecondaryHeading() {
+function SmartPumpSecondaryHeading({
+  reducedMotion,
+}: {
+  reducedMotion: boolean;
+}) {
   return (
-    <h2
+    <motion.h2
+      {...reveal("left", 0.24, reducedMotion)}
       className="absolute z-10 m-0"
       style={{
         ...headingFont,
@@ -552,13 +602,18 @@ function SmartPumpSecondaryHeading() {
       }}
     >
       Find the Perfect Match for Your Project
-    </h2>
+    </motion.h2>
   );
 }
 
-function SmartPumpSelectionButton() {
+function SmartPumpSelectionButton({
+  reducedMotion,
+}: {
+  reducedMotion: boolean;
+}) {
   return (
-    <button
+    <motion.button
+      {...reveal("right", 0.32, reducedMotion)}
       type="button"
       aria-label="Pump Selection"
       className="group pointer-events-auto absolute z-20 flex shrink-0 items-center overflow-hidden bg-[rgba(255,255,255,0.20)] text-left transition-[background-color] duration-[350ms] hover:bg-[#F7F7F7]"
@@ -632,7 +687,7 @@ function SmartPumpSelectionButton() {
           className="scale-[0.8] text-white opacity-0 transition-[opacity,transform] duration-[350ms] group-hover:scale-100 group-hover:opacity-100"
         />
       </span>
-    </button>
+    </motion.button>
   );
 }
 
@@ -730,6 +785,7 @@ const bezier = (a: number, b: number, c: number, d: number, t: number) => {
 function DesktopSmartPump() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const reducedMotion = useReducedMotion() ?? false;
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -834,15 +890,15 @@ function DesktopSmartPump() {
 
       <SmartPumpCurveLine />
 
-      <SmartPumpRobotHand />
+      <SmartPumpRobotHand reducedMotion={reducedMotion} />
 
-      <SmartPumpHeading />
+      <SmartPumpHeading reducedMotion={reducedMotion} />
 
-      <SmartPumpDescription />
+      <SmartPumpDescription reducedMotion={reducedMotion} />
 
-      <SmartPumpSecondaryHeading />
+      <SmartPumpSecondaryHeading reducedMotion={reducedMotion} />
 
-      <SmartPumpSelectionButton />
+      <SmartPumpSelectionButton reducedMotion={reducedMotion} />
 
       <SmartPumpProcessCards cardRefs={cardRefs} />
     </section>

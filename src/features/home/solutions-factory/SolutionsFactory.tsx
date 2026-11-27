@@ -721,13 +721,11 @@ function DesktopSectionsFactory() {
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
-              initial={reducedMotion ? false : "hidden"}
-              animate={headingVisible ? "visible" : "hidden"}
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: { delayChildren: 0.12, staggerChildren: 0.15 },
-                },
+              initial={reducedMotion ? false : { opacity: 0, x: -34 }}
+              animate={headingVisible ? { opacity: 1, x: 0 } : undefined}
+              transition={{
+                duration: reducedMotion ? 0 : 0.95,
+                ease: [0.25, 0.85, 0.3, 1],
               }}
             >
               {[
@@ -738,27 +736,7 @@ function DesktopSectionsFactory() {
                   key={line}
                   className="block overflow-hidden whitespace-nowrap"
                 >
-                  <motion.span
-                    className="block"
-                    variants={{
-                      hidden: {
-                        opacity: reducedMotion ? 1 : 0,
-                        y: reducedMotion ? "0%" : "110%",
-                        filter: reducedMotion ? "blur(0px)" : "blur(10px)",
-                      },
-                      visible: {
-                        opacity: 1,
-                        y: "0%",
-                        filter: "blur(0px)",
-                        transition: {
-                          duration: reducedMotion ? 0 : 1.05,
-                          ease: [0.22, 1, 0.36, 1],
-                        },
-                      },
-                    }}
-                  >
-                    {line}
-                  </motion.span>
+                  {line}
                 </span>
               ))}
             </motion.h1>
@@ -776,20 +754,12 @@ function DesktopSectionsFactory() {
 
                 fontVariationSettings: '"wght" 270, "wdth" 115',
               }}
-              initial={
-                reducedMotion
-                  ? false
-                  : { opacity: 0, y: 22, filter: "blur(7px)" }
-              }
-              animate={
-                headingVisible
-                  ? { opacity: 1, y: 0, filter: "blur(0px)" }
-                  : undefined
-              }
+              initial={reducedMotion ? false : { opacity: 0, x: 34 }}
+              animate={headingVisible ? { opacity: 1, x: 0 } : undefined}
               transition={{
-                duration: reducedMotion ? 0 : 0.85,
-                delay: reducedMotion ? 0 : 0.5,
-                ease: [0.22, 1, 0.36, 1],
+                duration: reducedMotion ? 0 : 0.95,
+                delay: reducedMotion ? 0 : 0.15,
+                ease: [0.25, 0.85, 0.3, 1],
               }}
             >
               Sempa Pompa delivers advanced engineering and innovative fluid

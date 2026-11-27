@@ -6,8 +6,56 @@ import HomeMediaVideo from "@/features/home/HomeMediaVideo";
 
 import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import { useRef, type CSSProperties } from "react";
 import { FiArrowUpRight } from "react-icons/fi";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  type Variants,
+} from "framer-motion";
+
+// Match the directional scroll reveals used on AboutUsPage.
+// Only opacity and transforms are animated; absolute layout stays untouched.
+const revealVariants: Variants = {
+  hidden: ({
+    direction = "up",
+    reduced = false,
+  }: {
+    direction?: "up" | "left" | "right";
+    reduced?: boolean;
+  }) => ({
+    opacity: reduced ? 1 : 0,
+    x: reduced
+      ? 0
+      : direction === "left"
+        ? -34
+        : direction === "right"
+          ? 34
+          : 0,
+    y: reduced ? 0 : direction === "up" ? 34 : 0,
+  }),
+  visible: { opacity: 1, x: 0, y: 0 },
+};
+
+function reveal(
+  direction: "up" | "left" | "right" = "up",
+  delay = 0,
+  reduced = false,
+) {
+  return {
+    variants: revealVariants,
+    custom: { direction, reduced },
+    initial: "hidden" as const,
+    whileInView: "visible" as const,
+    viewport: { once: false, amount: 0.38, margin: "0px 0px -14% 0px" },
+    transition: {
+      duration: reduced ? 0 : 0.95,
+      delay: reduced ? 0 : delay,
+      ease: [0.25, 0.85, 0.3, 1] as [number, number, number, number],
+    },
+  };
+}
 
 const DESIGN = {
   figmaWidth: 1440,
@@ -233,9 +281,10 @@ function ExportRateContent() {
 
 /* EXPORT RATE GLASS CARD */
 
-function ExportRateCard() {
+function ExportRateCard({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <div
+    <motion.div
+      {...reveal("right", 0.32, reducedMotion)}
       className="absolute z-[15]"
       style={{
         left: EXPORT_RATE_CARD.left,
@@ -251,7 +300,7 @@ function ExportRateCard() {
       }}
     >
       <ExportRateContent />
-    </div>
+    </motion.div>
   );
 }
 
@@ -360,9 +409,10 @@ function JoinSempaGlobalContent() {
 
 /* JOIN SEMPA GLOBAL CARD */
 
-function JoinSempaGlobalCard() {
+function JoinSempaGlobalCard({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <div
+    <motion.div
+      {...reveal("right", 0.52, reducedMotion)}
       className="absolute z-30"
       style={{
         left: JOIN_CARD.left,
@@ -374,15 +424,22 @@ function JoinSempaGlobalCard() {
       }}
     >
       <JoinSempaGlobalContent />
-    </div>
+    </motion.div>
   );
 }
 
 /* FORKLIFT IMAGE */
 
-function ForkliftImage({ assetBase }: { assetBase: string }) {
+function ForkliftImage({
+  assetBase,
+  reducedMotion,
+}: {
+  assetBase: string;
+  reducedMotion: boolean;
+}) {
   return (
-    <div
+    <motion.div
+      {...reveal("right", 0.18, reducedMotion)}
       className="pointer-events-none absolute z-20"
       style={{
         left: FORKLIFT.left,
@@ -403,15 +460,16 @@ function ForkliftImage({ assetBase }: { assetBase: string }) {
           filter: "none",
         }}
       />
-    </div>
+    </motion.div>
   );
 }
 
 /* NEW: 68% STATISTIC */
 
-function ExportPercentage() {
+function ExportPercentage({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <div
+    <motion.div
+      {...reveal("up", 0.42, reducedMotion)}
       aria-label="68 percent export rate"
       className="pointer-events-none absolute z-[25] m-0 whitespace-nowrap"
       style={{
@@ -427,15 +485,24 @@ function ExportPercentage() {
       }}
     >
       68%
-    </div>
+    </motion.div>
   );
 }
 
 /* MAIN COMPONENT */
 
-function DesktopSempaGlobal({ assetBase = "/home/sempa-global" }: { assetBase?: string }) {
+function DesktopSempaGlobal({
+  assetBase = "/home/sempa-global",
+}: {
+  assetBase?: string;
+}) {
+  const reducedMotion = useReducedMotion() ?? false;
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const sectionVisible = useInView(sectionRef, { once: false, amount: 0.25 });
+
   return (
     <section
+      ref={sectionRef}
       id="sempa-global"
       className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#E0EFF9]"
     >
@@ -448,7 +515,8 @@ function DesktopSempaGlobal({ assetBase = "/home/sempa-global" }: { assetBase?: 
         }}
       >
         {/* MAIN HEADING */}
-        <h2
+        <motion.h2
+          {...reveal("left", 0, reducedMotion)}
           className="absolute z-10 m-0 overflow-visible bg-[linear-gradient(180deg,#005EFF_0%,#001EA2_100%)] bg-clip-text text-transparent"
           style={{
             ...headingFont,
@@ -466,10 +534,11 @@ function DesktopSempaGlobal({ assetBase = "/home/sempa-global" }: { assetBase?: 
         >
           <span className="block whitespace-nowrap">Sempa Global</span>
           <span className="block whitespace-nowrap">Powering the World</span>
-        </h2>
+        </motion.h2>
 
         {/* LEFT STATISTIC */}
-        <div
+        <motion.div
+          {...reveal("up", 0.14, reducedMotion)}
           className="pointer-events-none absolute z-10 m-0 whitespace-nowrap text-[#4687B8]"
           style={{
             ...statisticFont,
@@ -484,18 +553,30 @@ function DesktopSempaGlobal({ assetBase = "/home/sempa-global" }: { assetBase?: 
           }}
         >
           100+
-        </div>
+        </motion.div>
 
         {/* CENTER VERTICAL LINE */}
-        <div
+        <motion.div
           aria-hidden="true"
           className="pointer-events-none absolute z-[5]"
+          initial={reducedMotion ? false : { opacity: 0, scaleY: 0 }}
+          animate={
+            reducedMotion || sectionVisible
+              ? { opacity: 1, scaleY: 1 }
+              : { opacity: 0, scaleY: 0 }
+          }
+          transition={{
+            duration: reducedMotion ? 0 : 1.1,
+            delay: reducedMotion ? 0 : 0.2,
+            ease: [0.25, 0.85, 0.3, 1],
+          }}
           style={{
             left: CENTER_LINE.left,
             top: CENTER_LINE.top,
             width: 0,
             height: CENTER_LINE.height,
             borderLeft: `${CENTER_LINE.thickness}px solid ${CENTER_LINE.color}`,
+            transformOrigin: "center top",
           }}
         />
 
@@ -511,7 +592,8 @@ function DesktopSempaGlobal({ assetBase = "/home/sempa-global" }: { assetBase?: 
             transformOrigin: "center center",
           }}
         >
-          <div
+          <motion.div
+            {...reveal("left", 0.24, reducedMotion)}
             className="absolute inset-0 overflow-hidden"
             style={{
               WebkitMaskImage:
@@ -534,13 +616,17 @@ function DesktopSempaGlobal({ assetBase = "/home/sempa-global" }: { assetBase?: 
                 objectPosition: "center center",
               }}
             >
-              <source src={`${assetBase}/sempa-global.webm`} type="video/webm" />
+              <source
+                src={`${assetBase}/sempa-global.webm`}
+                type="video/webm"
+              />
             </HomeMediaVideo>
-          </div>
+          </motion.div>
         </div>
 
         {/* EXPORT COUNTRIES CARD */}
-        <div
+        <motion.div
+          {...reveal("left", 0.36, reducedMotion)}
           className="absolute z-30"
           style={{
             left: EXPORT_CARD.left,
@@ -552,25 +638,37 @@ function DesktopSempaGlobal({ assetBase = "/home/sempa-global" }: { assetBase?: 
           }}
         >
           <ExportCountriesContent />
-        </div>
+        </motion.div>
 
         {/* EXPORT RATE CARD */}
-        <ExportRateCard />
+        <ExportRateCard reducedMotion={reducedMotion} />
 
         {/* FORKLIFT */}
-        <ForkliftImage assetBase={assetBase} />
+        <ForkliftImage assetBase={assetBase} reducedMotion={reducedMotion} />
 
         {/* NEW: 68% */}
-        <ExportPercentage />
+        <ExportPercentage reducedMotion={reducedMotion} />
 
         {/* JOIN CARD IN FRONT OF FORKLIFT */}
-        <JoinSempaGlobalCard />
+        <JoinSempaGlobalCard reducedMotion={reducedMotion} />
       </div>
     </section>
   );
 }
 
-export default function SempaGlobal({assetBase="/home/sempa-global"}:{assetBase?:string}) {
- const compact = useHomeCompact();
- return <div data-home-global-slot>{compact ? <MobileGlobal assetBase={assetBase}/> : <DesktopSempaGlobal assetBase={assetBase}/>}</div>;
+export default function SempaGlobal({
+  assetBase = "/home/sempa-global",
+}: {
+  assetBase?: string;
+}) {
+  const compact = useHomeCompact();
+  return (
+    <div data-home-global-slot>
+      {compact ? (
+        <MobileGlobal assetBase={assetBase} />
+      ) : (
+        <DesktopSempaGlobal assetBase={assetBase} />
+      )}
+    </div>
+  );
 }

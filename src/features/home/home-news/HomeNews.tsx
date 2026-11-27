@@ -15,6 +15,50 @@ import type {
 import { FiArrowUpRight, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 import { useRef, useState } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+
+// Same directional reveal language as AboutUsPage. Draggable rails retain
+// their own translate3d transforms in nested elements.
+const revealVariants: Variants = {
+  hidden: ({
+    direction = "up",
+    reduced = false,
+  }: {
+    direction?: "up" | "left" | "right";
+    reduced?: boolean;
+  }) => ({
+    opacity: reduced ? 1 : 0,
+    x: reduced
+      ? 0
+      : direction === "left"
+        ? -34
+        : direction === "right"
+          ? 34
+          : 0,
+    y: reduced ? 0 : direction === "up" ? 34 : 0,
+  }),
+  visible: { opacity: 1, x: 0, y: 0 },
+};
+
+function reveal(
+  direction: "up" | "left" | "right" = "up",
+  delay = 0,
+  reduced = false,
+  once = false,
+) {
+  return {
+    variants: revealVariants,
+    custom: { direction, reduced },
+    initial: "hidden" as const,
+    whileInView: "visible" as const,
+    viewport: { once, amount: 0.38, margin: "0px 0px -14% 0px" },
+    transition: {
+      duration: reduced ? 0 : 0.95,
+      delay: reduced ? 0 : delay,
+      ease: [0.25, 0.85, 0.3, 1] as [number, number, number, number],
+    },
+  };
+}
 
 const DESIGN = {
   figmaWidth: 1440,
@@ -874,9 +918,10 @@ function HomeNewsSecondCard() {
   );
 }
 
-function HomeNewsHeading() {
+function HomeNewsHeading({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <h2
+    <motion.h2
+      {...reveal("left", 0, reducedMotion)}
       className="absolute z-10 m-0 bg-clip-text text-transparent"
       style={{
         ...regularFont,
@@ -905,13 +950,14 @@ function HomeNewsHeading() {
       <span className="block whitespace-nowrap">Latest News &</span>
 
       <span className="block whitespace-nowrap">Announcements</span>
-    </h2>
+    </motion.h2>
   );
 }
 
-function HomeNewsDescription() {
+function HomeNewsDescription({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <p
+    <motion.p
+      {...reveal("right", 0.14, reducedMotion)}
       className="absolute z-10 m-0"
       style={{
         ...lightFont,
@@ -936,14 +982,19 @@ function HomeNewsDescription() {
       Stay up-to-date with our latest global projects, technological
       innovations, and corporate developments. Discover how Sempa is making an
       impact across industries worldwide.
-    </p>
+    </motion.p>
   );
 }
 
-function HomeNewsFeaturedInformation() {
+function HomeNewsFeaturedInformation({
+  reducedMotion,
+}: {
+  reducedMotion: boolean;
+}) {
   return (
     <>
-      <span
+      <motion.span
+        {...reveal("up", 0.18, reducedMotion)}
         className="absolute z-10 block whitespace-nowrap text-[#0D5792]"
         style={{
           ...regularFont,
@@ -962,9 +1013,10 @@ function HomeNewsFeaturedInformation() {
         }}
       >
         01
-      </span>
+      </motion.span>
 
-      <span
+      <motion.span
+        {...reveal("right", 0.28, reducedMotion)}
         className="absolute z-10 block text-[#9EB7D0]"
         style={{
           ...lightFont,
@@ -985,9 +1037,10 @@ function HomeNewsFeaturedInformation() {
         }}
       >
         Frankfurt Fair
-      </span>
+      </motion.span>
 
-      <span
+      <motion.span
+        {...reveal("right", 0.34, reducedMotion)}
         className="absolute z-10 block whitespace-nowrap text-[#9EB7D0]"
         style={{
           ...lightFont,
@@ -1008,7 +1061,7 @@ function HomeNewsFeaturedInformation() {
         }}
       >
         25.12.2025
-      </span>
+      </motion.span>
     </>
   );
 }
@@ -1186,9 +1239,10 @@ function HomeNewsViewAllButton() {
   );
 }
 
-function HomeNewsExhibitionTag() {
+function HomeNewsExhibitionTag({ reducedMotion }: { reducedMotion: boolean }) {
   return (
-    <div
+    <motion.div
+      {...reveal("right", 0.3, reducedMotion)}
       className="absolute z-10 flex items-center justify-center"
       style={{
         boxSizing: "border-box",
@@ -1221,7 +1275,7 @@ function HomeNewsExhibitionTag() {
       >
         Exhibition
       </span>
-    </div>
+    </motion.div>
   );
 }
 
@@ -1283,6 +1337,8 @@ function HomeNewsCalendar({
   onChangeFirstDate,
 
   onSelectDate,
+
+  reducedMotion,
 }: {
   firstDate: number;
 
@@ -1291,6 +1347,8 @@ function HomeNewsCalendar({
   onChangeFirstDate: (next: number) => void;
 
   onSelectDate: (next: number) => void;
+
+  reducedMotion: boolean;
 }) {
   const cal = UPCOMING_EVENTS.calendar;
 
@@ -1301,7 +1359,8 @@ function HomeNewsCalendar({
   });
 
   return (
-    <div
+    <motion.div
+      {...reveal("up", 0.14, reducedMotion, true)}
       className="absolute"
       aria-label="Upcoming event dates"
       style={{
@@ -1409,7 +1468,7 @@ function HomeNewsCalendar({
       >
         <FiArrowRight size={cal.arrowSize} strokeWidth={3.93} />
       </button>
-    </div>
+    </motion.div>
   );
 }
 
@@ -1560,13 +1619,14 @@ function UpcomingEventCardContent() {
   );
 }
 
-function HomeNewsEventCards() {
+function HomeNewsEventCards({ reducedMotion }: { reducedMotion: boolean }) {
   const cards = UPCOMING_EVENTS.eventCards;
 
   const rail = useCardDrag(cards.width + cards.gap);
 
   return (
-    <div
+    <motion.div
+      {...reveal("right", 0.24, reducedMotion, true)}
       aria-label="Upcoming event cards"
       className="absolute select-none cursor-default touch-pan-y overflow-hidden"
       {...rail.handlers}
@@ -1633,11 +1693,11 @@ function HomeNewsEventCards() {
           </article>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-function HomeNewsUpcomingHeader() {
+function HomeNewsUpcomingHeader({ reducedMotion }: { reducedMotion: boolean }) {
   const [firstDate, setFirstDate] = useState(INITIAL_CALENDAR_DATE);
 
   const [selectedDate, setSelectedDate] = useState(INITIAL_CALENDAR_DATE);
@@ -1654,7 +1714,8 @@ function HomeNewsUpcomingHeader() {
 
   return (
     <div className="absolute" style={{ top: UPCOMING_EVENTS.top, left: 0 }}>
-      <h2
+      <motion.h2
+        {...reveal("left", 0, reducedMotion)}
         className="absolute m-0"
         style={{
           ...regularFont,
@@ -1679,9 +1740,10 @@ function HomeNewsUpcomingHeader() {
         <span className="block whitespace-nowrap">Upcoming Events</span>
 
         <span className="block whitespace-nowrap">Discover Now</span>
-      </h2>
+      </motion.h2>
 
-      <span
+      <motion.span
+        {...reveal("up", 0.12, reducedMotion)}
         className="absolute block whitespace-nowrap"
         style={{
           ...regularFont,
@@ -1702,7 +1764,7 @@ function HomeNewsUpcomingHeader() {
         }}
       >
         {displayMonth}
-      </span>
+      </motion.span>
 
       <span
         aria-hidden="true"
@@ -1720,7 +1782,8 @@ function HomeNewsUpcomingHeader() {
         }}
       />
 
-      <span
+      <motion.span
+        {...reveal("up", 0.18, reducedMotion)}
         className="absolute block whitespace-nowrap"
         style={{
           ...regularFont,
@@ -1741,9 +1804,9 @@ function HomeNewsUpcomingHeader() {
         }}
       >
         {displayYear}
-      </span>
+      </motion.span>
 
-      <HomeNewsEventCards />
+      <HomeNewsEventCards reducedMotion={reducedMotion} />
 
       <HomeNewsCalendar
         firstDate={firstDate}
@@ -1758,12 +1821,14 @@ function HomeNewsUpcomingHeader() {
 
           setSelectedDate(next);
         }}
+        reducedMotion={reducedMotion}
       />
     </div>
   );
 }
 
 function DesktopHomeNews() {
+  const reducedMotion = useReducedMotion() ?? false;
   const newsRail = useCardDrag(
     NEWS_CARD.width +
       (SECOND_NEWS_CARD.left - NEWS_CARD.left - NEWS_CARD.width),
@@ -1787,18 +1852,19 @@ function DesktopHomeNews() {
         className="absolute inset-0"
         style={{ transform: `translateX(${SECTION.horizontalOffset}px)` }}
       >
-        <HomeNewsHeading />
+        <HomeNewsHeading reducedMotion={reducedMotion} />
 
-        <HomeNewsDescription />
+        <HomeNewsDescription reducedMotion={reducedMotion} />
 
-        <HomeNewsFeaturedInformation />
+        <HomeNewsFeaturedInformation reducedMotion={reducedMotion} />
 
         <HomeNewsViewAllButton />
 
-        <HomeNewsExhibitionTag />
+        <HomeNewsExhibitionTag reducedMotion={reducedMotion} />
 
         <div className="absolute inset-0" style={{ pointerEvents: "none" }}>
-          <div
+          <motion.div
+            {...reveal("up", 0.3, reducedMotion, true)}
             {...newsRail.handlers}
             className="absolute overflow-hidden select-none cursor-grab active:cursor-grabbing"
             aria-label="Drag latest news cards horizontally"
@@ -1839,10 +1905,10 @@ function DesktopHomeNews() {
                 <HomeNewsSecondCard />
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        <HomeNewsUpcomingHeader />
+        <HomeNewsUpcomingHeader reducedMotion={reducedMotion} />
       </div>
 
       {/* Page-level progressive blur: independent of cards, images and dragging. */}

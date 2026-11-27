@@ -51,6 +51,12 @@ const socialLinks = [
     href: "#",
   },
 ];
+const foundryMobileSocialLinks = [
+  { name: "Facebook", file: "facebook", href: "#" },
+  { name: "Instagram", file: "instagram", href: "#" },
+  { name: "YouTube", file: "youtube", href: "#" },
+  { name: "LinkedIn", file: "linkedin", href: "#" },
+];
 // ============================================================
 // LEGAL LINKS
 // ============================================================
@@ -157,6 +163,13 @@ const foundryNavLinkStyle: CSSProperties = {
   ...footerNavLinkStyle,
   color: "#E30A17",
 };
+const foundryMobileGradientStyle: CSSProperties = {
+  backgroundImage: "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
+  backgroundClip: "text",
+  WebkitBackgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+};
 // ============================================================
 // FOOTER NAV COLUMN
 // ============================================================
@@ -229,6 +242,203 @@ function FooterNavColumn({
     </nav>
   );
 }
+
+// ============================================================
+// FOUNDRY MOBILE FOOTER
+// ============================================================
+type FoundryMobileNavColumnProps = {
+  title: string;
+  links: string[];
+};
+
+function FoundryMobileNavColumn({ title, links }: FoundryMobileNavColumnProps) {
+  return (
+    <nav aria-label={title} className="min-w-0">
+      <h3
+        className="m-0 text-[13px] font-semibold leading-[1.3] tracking-[-0.03em]"
+        style={foundryMobileGradientStyle}
+      >
+        {title}
+      </h3>
+      <ul className="m-0 list-none p-0">
+        {links.map((link, index) => (
+          <li key={`${title}-${index}`} className="m-0 p-0">
+            <a
+              href="#"
+              className="block w-fit max-w-full text-[13px] font-normal leading-[1.3] tracking-[-0.035em] text-[#E30A17] transition-colors duration-300 hover:text-white"
+            >
+              {link}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function FoundryMobileFooter() {
+  return (
+    <div className="relative mx-auto w-full overflow-hidden bg-[#020304] pb-[88px] text-[#E30A17] xl:hidden">
+      <div className="relative h-[580px] w-full">
+        <video
+          aria-hidden="true"
+          src="/footer/dokumhane-mobil-hero.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          className="pointer-events-none absolute inset-x-0 top-[190px] h-[330px] w-full object-cover object-center"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 20%, black 72%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 20%, black 72%, transparent 100%)",
+          }}
+        />
+
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center">
+          <Image
+            src="/footer/green-pump-logo.svg"
+            alt="Green Pump"
+            width={74}
+            height={104}
+            unoptimized
+            className="h-auto w-[74px] object-contain"
+          />
+        </div>
+
+        <h2
+          className="absolute left-1/2 top-[107px] z-20 m-0 w-[310px] max-w-[90vw] -translate-x-1/2 pb-[0.16em] text-center text-[28px] font-normal leading-[1.1] tracking-[-0.055em] sm:text-[32px]"
+          style={{
+            fontFamily: "var(--font-sf-pro), Arial, sans-serif",
+            ...foundryMobileGradientStyle,
+          }}
+        >
+          <span className="block">Powering global</span>
+          <span className="block">industries with</span>
+          <span className="block">advanced fluid</span>
+          <span className="block">transfer</span>
+          <span className="block">technologies.</span>
+        </h2>
+
+        <div className="pointer-events-none absolute left-1/2 top-[353px] z-20 h-[66px] w-[210px] -translate-x-1/2">
+          <Image
+            src="/footer/sempa-red.png"
+            alt="SEMPA"
+            fill
+            unoptimized
+            sizes="210px"
+            className="object-contain"
+          />
+        </div>
+      </div>
+
+      <div className="relative z-10 flex justify-center pt-[8px]">
+        <Image
+          src="/footer/slogan.png"
+          alt="I'm Pump Technology"
+          width={244}
+          height={50}
+          unoptimized
+          className="h-auto w-[244px] max-w-[70vw] object-contain"
+        />
+      </div>
+
+      <div className="mx-auto mt-[40px] grid w-full max-w-[520px] grid-cols-2 items-start gap-x-[34px] gap-y-[30px] px-[12%] sm:px-[65px]">
+        <FoundryMobileNavColumn title="Corporate" links={corporateLinks} />
+        <FoundryMobileNavColumn title="Production" links={productionLinks} />
+        <FoundryMobileNavColumn title="Products" links={productLinks} />
+        <FoundryMobileNavColumn title="Media" links={mediaLinks} />
+        <FoundryMobileNavColumn title="Solutions" links={solutionsLinks} />
+        <FoundryMobileNavColumn title="Support" links={supportLinks} />
+      </div>
+
+      <div className="mt-[44px] flex justify-center">
+        <Image
+          src="/footer/turkey-pump-industry.png"
+          alt="Turkey Pump Industry Export Leader"
+          width={146}
+          height={75}
+          unoptimized
+          className="h-auto w-[146px] object-contain"
+        />
+      </div>
+
+      <address
+        className="mx-auto mt-[14px] w-[280px] max-w-[85vw] pb-[0.12em] text-center text-[11px] not-italic leading-[1.25]"
+        style={{
+          fontFamily: "var(--font-sf-pro), Arial, sans-serif",
+          ...foundryMobileGradientStyle,
+        }}
+      >
+        <span className="block">Büyükkayacık Organize Sanayi Bölgesi</span>
+        <span className="block">Mahallesi 22. Sokak NO:4 42250</span>
+        <span className="block">Selçuklu, Konya / Türkiye</span>
+        <a
+          href="mailto:info@sempapompa.com"
+          className="mx-auto block w-fit underline underline-offset-2"
+          style={foundryMobileGradientStyle}
+        >
+          info@sempapompa.com
+        </a>
+      </address>
+
+      <div className="mt-[19px] flex justify-center">
+        <a
+          href="tel:4446413"
+          className="inline-block pb-[1px] text-center text-[23px] leading-[1.2] tracking-[-0.08em]"
+          style={{
+            ...foundryMobileGradientStyle,
+            borderBottom: "1px solid #7D060D",
+          }}
+        >
+          444 6 413
+        </a>
+      </div>
+
+      <div className="mt-[36px] flex items-center justify-center gap-[7px]">
+        {foundryMobileSocialLinks.map((social) => (
+          <a
+            key={social.name}
+            href={social.href}
+            aria-label={social.name}
+            className="relative block h-[27px] w-[27px] transition-transform duration-300 hover:-translate-y-[2px]"
+          >
+            <Image
+              src={`/footer/red-${social.file}.webp`}
+              alt={social.name}
+              fill
+              unoptimized
+              sizes="27px"
+              className="object-contain"
+            />
+          </a>
+        ))}
+      </div>
+
+      <p
+        className="mx-auto mt-[20px] max-w-[260px] text-center text-[12px] leading-[1.24]"
+        style={foundryMobileGradientStyle}
+      >
+        © 2026 SEMPA. TÜM HAKLARI SAKLIDIR.
+      </p>
+
+      <div className="mx-auto mt-[10px] flex max-w-[270px] flex-col items-center gap-[3px] text-center text-[11px] leading-[1.25]">
+        {legalLinks.map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            className="text-[#E30A17] underline underline-offset-2 transition-colors duration-300 hover:text-white"
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
 // ============================================================
 // FOOTER COMPONENT
 // ============================================================
@@ -258,7 +468,13 @@ export default function Footer({ variant }: FooterProps) {
         min-[1600px]:h-[1080px]
       "
     >
-      {/* =====================================================
+      {activeVariant === "foundry" && <FoundryMobileFooter />}
+      <div
+        className={
+          activeVariant === "foundry" ? "hidden xl:contents" : "contents"
+        }
+      >
+        {/* =====================================================
           BACKGROUND VIDEO / IMAGE
           GREEN PUMP:
           green-footer-pingpong.mp4
@@ -270,24 +486,24 @@ export default function Footer({ variant }: FooterProps) {
           Videolar ileri + geri birleştirildiği için
           native loop ile sürekli tekrar eder.
       ===================================================== */}
-      <div
-        aria-hidden="true"
-        className="
+        <div
+          aria-hidden="true"
+          className="
           pointer-events-none
           absolute inset-0 z-0
           overflow-hidden
         "
-      >
-        {assets.video ? (
-          <video
-            key={assets.video}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            disablePictureInPicture
-            className={`
+        >
+          {assets.video ? (
+            <video
+              key={assets.video}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              disablePictureInPicture
+              className={`
               absolute inset-0
               h-full w-full
               object-cover
@@ -298,44 +514,44 @@ export default function Footer({ variant }: FooterProps) {
                   : ""
               }
             `}
-          >
-            <source src={assets.video} type="video/mp4" />
-          </video>
-        ) : (
-          <div
-            className="
+            >
+              <source src={assets.video} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              className="
               absolute inset-0
               bg-cover
               bg-center
               bg-no-repeat
             "
-            style={{
-              backgroundImage: `url('${assets.image}')`,
-            }}
-          />
-        )}
-      </div>
-      {/* =====================================================
+              style={{
+                backgroundImage: `url('${assets.image}')`,
+              }}
+            />
+          )}
+        </div>
+        {/* =====================================================
           FIGMA BLUR
           Top: 62.4%
           Blur: 15px
           Background: #000000 / 20%
       ===================================================== */}
-      <div
-        aria-hidden="true"
-        className="
+        <div
+          aria-hidden="true"
+          className="
           pointer-events-none
           absolute inset-x-0 bottom-0
           top-[62.4%] z-[1]
           bg-black/20
           backdrop-blur-[15px]
         "
-      />
-      {/* =====================================================
+        />
+        {/* =====================================================
           GREEN PUMP SVG
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           pointer-events-none
           absolute z-30
           right-[24px]
@@ -349,24 +565,24 @@ export default function Footer({ variant }: FooterProps) {
           xl:top-[-11%]
           xl:w-[8.2639%]
         "
-        style={{
-          aspectRatio: "135 / 189",
-        }}
-      >
-        <Image
-          src="/footer/green-pump-logo.svg"
-          alt="Green Pump"
-          fill
-          unoptimized
-          sizes="(min-width: 1280px) 9vw, 135px"
-          className="object-contain"
-        />
-      </div>
-      {/* =====================================================
+          style={{
+            aspectRatio: "135 / 189",
+          }}
+        >
+          <Image
+            src="/footer/green-pump-logo.svg"
+            alt="Green Pump"
+            fill
+            unoptimized
+            sizes="(min-width: 1280px) 9vw, 135px"
+            className="object-contain"
+          />
+        </div>
+        {/* =====================================================
           SOL ÜST BAŞLIK
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-10
           left-6 top-[48px]
           w-[calc(100%-48px)]
@@ -375,9 +591,9 @@ export default function Footer({ variant }: FooterProps) {
           xl:w-[45%]
           xl:h-[10.6275%]
         "
-      >
-        <h2
-          className="
+        >
+          <h2
+            className="
             m-0 font-sans
             text-[28px]
             font-normal
@@ -388,42 +604,42 @@ export default function Footer({ variant }: FooterProps) {
             xl:text-[35px]
             min-[1600px]:text-[38.3px]
           "
-          style={{
-            fontFamily: "var(--font-sf-pro), Arial, sans-serif",
-            fontWeight: 410,
-            fontVariationSettings: '"wght" 410, "wdth" 132, "opsz" 28',
-            letterSpacing: 0,
-            ...(activeVariant === "foundry"
-              ? {
-                  // "g", "y", "p" gibi harflerin alt uzantılarını kesme.
-                  lineHeight: 1.2,
-                  paddingBottom: "0.15em",
-                  backgroundImage:
-                    "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                  WebkitTextFillColor: "transparent",
-                }
-              : {}),
-          }}
-        >
-          <span className="hidden xl:block">
-            Powering global industries with
-          </span>
-          <span className="hidden xl:block">advanced fluid transfer</span>
-          <span className="hidden xl:block">technologies.</span>
-          <span className="xl:hidden">
-            Powering global industries with advanced fluid transfer
-            technologies.
-          </span>
-        </h2>
-      </div>
-      {/* =====================================================
+            style={{
+              fontFamily: "var(--font-sf-pro), Arial, sans-serif",
+              fontWeight: 410,
+              fontVariationSettings: '"wght" 410, "wdth" 132, "opsz" 28',
+              letterSpacing: 0,
+              ...(activeVariant === "foundry"
+                ? {
+                    // "g", "y", "p" gibi harflerin alt uzantılarını kesme.
+                    lineHeight: 1.2,
+                    paddingBottom: "0.15em",
+                    backgroundImage:
+                      "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    color: "transparent",
+                    WebkitTextFillColor: "transparent",
+                  }
+                : {}),
+            }}
+          >
+            <span className="hidden xl:block">
+              Powering global industries with
+            </span>
+            <span className="hidden xl:block">advanced fluid transfer</span>
+            <span className="hidden xl:block">technologies.</span>
+            <span className="xl:hidden">
+              Powering global industries with advanced fluid transfer
+              technologies.
+            </span>
+          </h2>
+        </div>
+        {/* =====================================================
           SEMPA LOGOSU
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-10
           left-[24px]
           top-[227px]
@@ -434,25 +650,25 @@ export default function Footer({ variant }: FooterProps) {
           xl:h-[7.8%]
           xl:w-[19%]
         "
-      >
-        <Image
-          src={
-            activeVariant === "foundry"
-              ? "/footer/sempa-red.png"
-              : "/footer/sempa-gray.png"
-          }
-          alt="SEMPA"
-          fill
-          unoptimized
-          sizes="(min-width: 1280px) 19vw, 253px"
-          className="object-contain object-left"
-        />
-      </div>
-      {/* =====================================================
+        >
+          <Image
+            src={
+              activeVariant === "foundry"
+                ? "/footer/sempa-red.png"
+                : "/footer/sempa-gray.png"
+            }
+            alt="SEMPA"
+            fill
+            unoptimized
+            sizes="(min-width: 1280px) 19vw, 253px"
+            className="object-contain object-left"
+          />
+        </div>
+        {/* =====================================================
           ADRES VE E-POSTA
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-10
           left-[24px]
           top-[390px]
@@ -463,9 +679,9 @@ export default function Footer({ variant }: FooterProps) {
           xl:w-[20.0694%]
           xl:max-w-none
         "
-      >
-        <address
-          className="
+        >
+          <address
+            className="
             m-0 not-italic
             font-sans
             text-[12px]
@@ -474,33 +690,87 @@ export default function Footer({ variant }: FooterProps) {
             text-[#6DB7E0]
             min-[1600px]:text-[13.1px]
           "
-          style={{
-            ...sfProRegular,
-            letterSpacing: 0,
-            ...(activeVariant === "foundry"
-              ? {
-                  lineHeight: 1.25,
-                  paddingBottom: "0.15em",
-                  backgroundImage:
-                    "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                  WebkitTextFillColor: "transparent",
-                }
-              : {}),
-          }}
-        >
-          <span className="block">Büyükkayacık Organize Sanayi Bölgesi</span>
-          <span className="block">Mahallesi 22. Sokak NO:4 42250</span>
-          <span className="block">Selçuklu, Konya / Türkiye</span>
-          <a
-            href="mailto:info@sempapompa.com"
-            className="
+            style={{
+              ...sfProRegular,
+              letterSpacing: 0,
+              ...(activeVariant === "foundry"
+                ? {
+                    lineHeight: 1.25,
+                    paddingBottom: "0.15em",
+                    backgroundImage:
+                      "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    color: "transparent",
+                    WebkitTextFillColor: "transparent",
+                  }
+                : {}),
+            }}
+          >
+            <span className="block">Büyükkayacık Organize Sanayi Bölgesi</span>
+            <span className="block">Mahallesi 22. Sokak NO:4 42250</span>
+            <span className="block">Selçuklu, Konya / Türkiye</span>
+            <a
+              href="mailto:info@sempapompa.com"
+              className="
               block w-fit
               transition-colors duration-300
             "
+              style={{
+                color: activeVariant === "foundry" ? "transparent" : "#6DB7E0",
+                ...(activeVariant === "foundry"
+                  ? {
+                      backgroundImage:
+                        "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }
+                  : {}),
+                textDecorationLine: "underline",
+                textDecorationStyle: "solid",
+                textDecorationColor:
+                  activeVariant === "foundry" ? "#7D060D" : "currentColor",
+                textDecorationThickness: "auto",
+                textUnderlineOffset: "2px",
+                textDecorationSkipInk: "none",
+              }}
+            >
+              info@sempapompa.com
+            </a>
+          </address>
+        </div>
+        {/* =====================================================
+          TELEFON NUMARASI
+      ===================================================== */}
+        <div
+          className="
+          absolute z-10
+          left-[24px]
+          top-[455px]
+          w-[180px]
+          xl:left-[8.3333%]
+          xl:top-[53.2389%]
+          xl:w-[10.1389%]
+          xl:h-[4.251%]
+        "
+        >
+          <a
+            href="tel:4446413"
+            className="
+            inline-block w-fit
+            whitespace-nowrap
+            font-sans
+            text-[28px]
+            leading-[139%]
+            xl:text-[30px]
+            min-[1600px]:text-[32.8px]
+          "
             style={{
+              fontFamily: "var(--font-sf-pro), Arial, sans-serif",
+              fontWeight: 410,
+              fontVariationSettings: '"wght" 410, "wdth" 132, "opsz" 30',
+              letterSpacing: "-0.1em",
               color: activeVariant === "foundry" ? "transparent" : "#6DB7E0",
               ...(activeVariant === "foundry"
                 ? {
@@ -511,76 +781,22 @@ export default function Footer({ variant }: FooterProps) {
                     WebkitTextFillColor: "transparent",
                   }
                 : {}),
-              textDecorationLine: "underline",
-              textDecorationStyle: "solid",
-              textDecorationColor:
-                activeVariant === "foundry" ? "#7D060D" : "currentColor",
-              textDecorationThickness: "auto",
-              textUnderlineOffset: "2px",
-              textDecorationSkipInk: "none",
+              textDecoration: "none",
+              borderBottom:
+                activeVariant === "foundry"
+                  ? "1px solid #7D060D"
+                  : "1px solid #6DB7E0",
+              paddingBottom: "0px",
             }}
           >
-            info@sempapompa.com
+            444 6 413
           </a>
-        </address>
-      </div>
-      {/* =====================================================
-          TELEFON NUMARASI
-      ===================================================== */}
-      <div
-        className="
-          absolute z-10
-          left-[24px]
-          top-[455px]
-          w-[180px]
-          xl:left-[8.3333%]
-          xl:top-[53.2389%]
-          xl:w-[10.1389%]
-          xl:h-[4.251%]
-        "
-      >
-        <a
-          href="tel:4446413"
-          className="
-            inline-block w-fit
-            whitespace-nowrap
-            font-sans
-            text-[28px]
-            leading-[139%]
-            xl:text-[30px]
-            min-[1600px]:text-[32.8px]
-          "
-          style={{
-            fontFamily: "var(--font-sf-pro), Arial, sans-serif",
-            fontWeight: 410,
-            fontVariationSettings: '"wght" 410, "wdth" 132, "opsz" 30',
-            letterSpacing: "-0.1em",
-            color: activeVariant === "foundry" ? "transparent" : "#6DB7E0",
-            ...(activeVariant === "foundry"
-              ? {
-                  backgroundImage:
-                    "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }
-              : {}),
-            textDecoration: "none",
-            borderBottom:
-              activeVariant === "foundry"
-                ? "1px solid #7D060D"
-                : "1px solid #6DB7E0",
-            paddingBottom: "0px",
-          }}
-        >
-          444 6 413
-        </a>
-      </div>
-      {/* =====================================================
+        </div>
+        {/* =====================================================
           I'M PUMP TECHNOLOGY
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-10
           right-6
           top-[57%]
@@ -591,24 +807,24 @@ export default function Footer({ variant }: FooterProps) {
           xl:top-[59.413%]
           xl:w-[15.7639%]
         "
-        style={{
-          aspectRatio: "227 / 44",
-        }}
-      >
-        <Image
-          src="/footer/slogan.png"
-          alt="I'm Pump Technology"
-          fill
-          unoptimized
-          sizes="(min-width: 1280px) 16vw, 227px"
-          className="object-contain"
-        />
-      </div>
-      {/* =====================================================
+          style={{
+            aspectRatio: "227 / 44",
+          }}
+        >
+          <Image
+            src="/footer/slogan.png"
+            alt="I'm Pump Technology"
+            fill
+            unoptimized
+            sizes="(min-width: 1280px) 16vw, 227px"
+            className="object-contain"
+          />
+        </div>
+        {/* =====================================================
           TURKEY PUMP INDUSTRY
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-10
           right-[24px]
           top-[70%]
@@ -619,87 +835,87 @@ export default function Footer({ variant }: FooterProps) {
           xl:top-[69.8381%]
           xl:w-[10.1708%]
         "
-        style={{
-          aspectRatio: "146.46 / 74.37",
-        }}
-      >
-        <Image
-          src="/footer/turkey-pump-industry.png"
-          alt="Turkey Pump Industry Export Leader"
-          fill
-          unoptimized
-          sizes="(min-width: 1280px) 11vw, 146px"
-          className="object-contain"
-        />
-      </div>
-      {/* =====================================================
+          style={{
+            aspectRatio: "146.46 / 74.37",
+          }}
+        >
+          <Image
+            src="/footer/turkey-pump-industry.png"
+            alt="Turkey Pump Industry Export Leader"
+            fill
+            unoptimized
+            sizes="(min-width: 1280px) 11vw, 146px"
+            className="object-contain"
+          />
+        </div>
+        {/* =====================================================
           FOOTER NAVIGATION
       ===================================================== */}
-      <FooterNavColumn
-        title="Corporate"
-        links={corporateLinks}
-        isFoundry={activeVariant === "foundry"}
-        className="
+        <FooterNavColumn
+          title="Corporate"
+          links={corporateLinks}
+          isFoundry={activeVariant === "foundry"}
+          className="
           left-[24px]
           w-[185px]
           xl:left-[8.3333%]
           xl:w-[13%]
         "
-      />
-      <FooterNavColumn
-        title="Production"
-        links={productionLinks}
-        isFoundry={activeVariant === "foundry"}
-        className="
+        />
+        <FooterNavColumn
+          title="Production"
+          links={productionLinks}
+          isFoundry={activeVariant === "foundry"}
+          className="
           left-[210px]
           xl:left-[21.4583%]
           xl:w-[8.3333%]
         "
-      />
-      <FooterNavColumn
-        title="Product"
-        links={productLinks}
-        isFoundry={activeVariant === "foundry"}
-        className="
+        />
+        <FooterNavColumn
+          title="Product"
+          links={productLinks}
+          isFoundry={activeVariant === "foundry"}
+          className="
           left-[360px]
           xl:left-[32.2917%]
           xl:w-[8.3333%]
         "
-      />
-      <FooterNavColumn
-        title="Media"
-        links={mediaLinks}
-        isFoundry={activeVariant === "foundry"}
-        className="
+        />
+        <FooterNavColumn
+          title="Media"
+          links={mediaLinks}
+          isFoundry={activeVariant === "foundry"}
+          className="
           left-[510px]
           w-[119px]
           xl:left-[43.125%]
           xl:w-[8.2639%]
         "
-      />
-      <FooterNavColumn
-        title="Solutions"
-        links={solutionsLinks}
-        isFoundry={activeVariant === "foundry"}
-        className="
+        />
+        <FooterNavColumn
+          title="Solutions"
+          links={solutionsLinks}
+          isFoundry={activeVariant === "foundry"}
+          className="
           left-[650px]
           w-[93px]
           xl:left-[53.8889%]
           xl:w-[6.4583%]
         "
-      />
-      <FooterNavColumn
-        title="Support"
-        links={supportLinks}
-        isFoundry={activeVariant === "foundry"}
-        className="
+        />
+        <FooterNavColumn
+          title="Support"
+          links={supportLinks}
+          isFoundry={activeVariant === "foundry"}
+          className="
           left-[775px]
           w-[93px]
           xl:left-[62.8472%]
           xl:w-[6.4583%]
         "
-      />
-      {/* =====================================================
+        />
+        {/* =====================================================
           SOCIAL MEDIA
           GREEN PUMP:
           white-facebook.webp
@@ -712,8 +928,8 @@ export default function Footer({ variant }: FooterProps) {
           red-linkedin.webp
           red-youtube.webp
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-20
           right-[24px]
           bottom-[75px]
@@ -727,15 +943,15 @@ export default function Footer({ variant }: FooterProps) {
           xl:h-[1.80556vw]
           xl:w-[7.7778%]
         "
-      >
-        {socialLinks.map((social) => {
-          const iconSrc = `/footer/${assets.socialPrefix}${social.file}.webp`;
-          return (
-            <a
-              key={social.name}
-              href={social.href}
-              aria-label={social.name}
-              className="
+        >
+          {socialLinks.map((social) => {
+            const iconSrc = `/footer/${assets.socialPrefix}${social.file}.webp`;
+            return (
+              <a
+                key={social.name}
+                href={social.href}
+                aria-label={social.name}
+                className="
                 group relative block
                 h-full
                 w-[22.2143%]
@@ -745,29 +961,29 @@ export default function Footer({ variant }: FooterProps) {
                 duration-300 ease-out
                 hover:-translate-y-[3px]
               "
-            >
-              <Image
-                src={iconSrc}
-                alt={social.name}
-                fill
-                unoptimized
-                sizes="(min-width: 1280px) 2vw, 25px"
-                className="
+              >
+                <Image
+                  src={iconSrc}
+                  alt={social.name}
+                  fill
+                  unoptimized
+                  sizes="(min-width: 1280px) 2vw, 25px"
+                  className="
                   object-contain
                   transition-opacity
                   duration-300
                   group-hover:opacity-75
                 "
-              />
-            </a>
-          );
-        })}
-      </div>
-      {/* =====================================================
+                />
+              </a>
+            );
+          })}
+        </div>
+        {/* =====================================================
           YASAL BAĞLANTILAR
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-20
           left-[24px]
           bottom-[65px]
@@ -777,9 +993,9 @@ export default function Footer({ variant }: FooterProps) {
           xl:top-[94.8381%]
           xl:w-[36.875%]
         "
-      >
-        <div
-          className="
+        >
+          <div
+            className="
             flex flex-wrap
             items-center
             gap-x-[4px] gap-y-[4px]
@@ -789,61 +1005,62 @@ export default function Footer({ variant }: FooterProps) {
             xl:whitespace-nowrap
             min-[1600px]:text-[13.1px]
           "
-          style={{
-            fontFamily: "var(--font-sf-pro), Arial, sans-serif",
-            fontWeight: 300,
-            fontVariationSettings: '"wght" 300, "wdth" 132, "opsz" 12',
-            letterSpacing: "-0.1em",
-            color: activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
-          }}
-        >
-          {legalLinks.map((link, index) => (
-            <span
-              key={link.label}
-              className="inline-flex items-center gap-[4px]"
-            >
-              {index > 0 && (
-                <span
-                  aria-hidden="true"
-                  style={{
-                    color: activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
-                    textDecoration: "none",
-                    fontWeight: 300,
-                  }}
-                >
-                  •
-                </span>
-              )}
-              <a
-                href={link.href}
-                className="
+            style={{
+              fontFamily: "var(--font-sf-pro), Arial, sans-serif",
+              fontWeight: 300,
+              fontVariationSettings: '"wght" 300, "wdth" 132, "opsz" 12',
+              letterSpacing: "-0.1em",
+              color: activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
+            }}
+          >
+            {legalLinks.map((link, index) => (
+              <span
+                key={link.label}
+                className="inline-flex items-center gap-[4px]"
+              >
+                {index > 0 && (
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      color:
+                        activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
+                      textDecoration: "none",
+                      fontWeight: 300,
+                    }}
+                  >
+                    •
+                  </span>
+                )}
+                <a
+                  href={link.href}
+                  className="
                   inline-block cursor-pointer
                   transition-opacity duration-300
                   hover:opacity-70
                 "
-                style={{
-                  color: activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
-                  fontWeight: 300,
-                  textDecorationLine: "underline",
-                  textDecorationStyle: "solid",
-                  textDecorationColor:
-                    activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
-                  textDecorationThickness: "0.6px",
-                  textUnderlineOffset: "2px",
-                  textDecorationSkipInk: "none",
-                }}
-              >
-                {link.label}
-              </a>
-            </span>
-          ))}
+                  style={{
+                    color: activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
+                    fontWeight: 300,
+                    textDecorationLine: "underline",
+                    textDecorationStyle: "solid",
+                    textDecorationColor:
+                      activeVariant === "foundry" ? "#E30A17" : "#9EB7D0",
+                    textDecorationThickness: "0.6px",
+                    textUnderlineOffset: "2px",
+                    textDecorationSkipInk: "none",
+                  }}
+                >
+                  {link.label}
+                </a>
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
-      {/* =====================================================
+        {/* =====================================================
           COPYRIGHT
       ===================================================== */}
-      <div
-        className="
+        <div
+          className="
           absolute z-10
           right-[24px]
           bottom-[25px]
@@ -854,9 +1071,9 @@ export default function Footer({ variant }: FooterProps) {
           xl:top-[94.8381%]
           xl:w-[20.3472%]
         "
-      >
-        <p
-          className="
+        >
+          <p
+            className="
             m-0 whitespace-nowrap
             font-sans
             text-[12px]
@@ -864,25 +1081,26 @@ export default function Footer({ variant }: FooterProps) {
             tracking-normal
             min-[1600px]:text-[13.1px]
           "
-          style={{
-            fontFamily: "var(--font-sf-pro), Arial, sans-serif",
-            fontWeight: 410,
-            fontVariationSettings: '"wght" 410, "wdth" 132, "opsz" 12',
-            letterSpacing: 0,
-            color: activeVariant === "foundry" ? "transparent" : "#4687B8",
-            ...(activeVariant === "foundry"
-              ? {
-                  backgroundImage:
-                    "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }
-              : {}),
-          }}
-        >
-          © 2026 SEMPA. TÜM HAKLARI SAKLIDIR.
-        </p>
+            style={{
+              fontFamily: "var(--font-sf-pro), Arial, sans-serif",
+              fontWeight: 410,
+              fontVariationSettings: '"wght" 410, "wdth" 132, "opsz" 12',
+              letterSpacing: 0,
+              color: activeVariant === "foundry" ? "transparent" : "#4687B8",
+              ...(activeVariant === "foundry"
+                ? {
+                    backgroundImage:
+                      "linear-gradient(180deg, #E30A17 0%, #7D060D 100%)",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }
+                : {}),
+            }}
+          >
+            © 2026 SEMPA. TÜM HAKLARI SAKLIDIR.
+          </p>
+        </div>
       </div>
     </footer>
   );
