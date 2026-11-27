@@ -5,6 +5,7 @@ import { useHomeCompact, MobileNews } from "../HomeMobileSections";
 import Image from "next/image";
 
 import Link from "next/link";
+import GlassViewAllButton from "@/components/ui/GlassViewAllButton";
 
 import type {
   CSSProperties,
@@ -197,32 +198,7 @@ const FEATURED_NEWS = {
 
 const VIEW_ALL_BUTTON = {
   left: px(1180),
-
   top: HEADING.top + px(6762 - 6755),
-
-  width: px(140),
-
-  height: px(43),
-
-  radius: px(19),
-
-  circleSize: px(33),
-
-  circleInset: px(5),
-
-  textInset: px(18),
-
-  textMove: px(40),
-
-  fontSize: px(15),
-
-  blur: px(15),
-
-  glowSize: px(95),
-
-  glowOpacity: 0.46,
-
-  glowBlur: px(18),
 };
 
 const EXHIBITION_TAG = {
@@ -1067,175 +1043,14 @@ function HomeNewsFeaturedInformation({
 }
 
 function HomeNewsViewAllButton() {
-  const circleStart =
-    VIEW_ALL_BUTTON.width -
-    VIEW_ALL_BUTTON.circleSize -
-    VIEW_ALL_BUTTON.circleInset;
-
-  const glowOffset =
-    (VIEW_ALL_BUTTON.glowSize - VIEW_ALL_BUTTON.circleSize) / 2;
-
-  const vars = {
-    "--circle-start": `${circleStart}px`,
-
-    "--circle-end": `${VIEW_ALL_BUTTON.circleInset}px`,
-
-    "--text-move": `${VIEW_ALL_BUTTON.textMove}px`,
-  } as CSSProperties;
-
   return (
-    <Link
+    <GlassViewAllButton
       href="/news"
       aria-label="View all news"
-      className="group absolute z-20 block overflow-hidden
-
-        transition-colors duration-[350ms]"
-      style={{
-        ...vars,
-
-        left: VIEW_ALL_BUTTON.left,
-
-        top: VIEW_ALL_BUTTON.top,
-
-        width: VIEW_ALL_BUTTON.width,
-
-        height: VIEW_ALL_BUTTON.height,
-
-        borderRadius: VIEW_ALL_BUTTON.radius,
-
-        border: `${px(0.5)}px solid #9EB7D0`,
-
-        backgroundColor: "rgba(255,255,255,0.10)",
-
-        backdropFilter: `blur(${VIEW_ALL_BUTTON.blur}px)`,
-
-        WebkitBackdropFilter: `blur(${VIEW_ALL_BUTTON.blur}px)`,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = "#F7F7F7";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.10)";
-      }}
-    >
-      {/* GLASS HIGHLIGHT */}
-
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(115deg,rgba(255,255,255,0.13),rgba(255,255,255,0.01))",
-        }}
-      />
-
-      {/* GLOW */}
-
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 z-[1]
-
-          -translate-y-1/2
-
-          left-[var(--circle-start)]
-
-          group-hover:left-[var(--circle-end)]
-
-          transition-[left] duration-[650ms]
-
-          ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{
-          width: VIEW_ALL_BUTTON.circleSize,
-
-          height: VIEW_ALL_BUTTON.circleSize,
-        }}
-      >
-        <span
-          className="absolute rounded-full"
-          style={{
-            width: VIEW_ALL_BUTTON.glowSize,
-
-            height: VIEW_ALL_BUTTON.glowSize,
-
-            left: -glowOffset,
-
-            top: -glowOffset,
-
-            background:
-              "radial-gradient(circle,rgba(0,94,255,0.60),rgba(0,94,255,0.12) 54%,transparent 75%)",
-
-            opacity: VIEW_ALL_BUTTON.glowOpacity,
-
-            filter: `blur(${VIEW_ALL_BUTTON.glowBlur}px)`,
-          }}
-        />
-      </span>
-
-      {/* TEXT */}
-
-      <span
-        className="pointer-events-none absolute top-1/2 z-[2]
-
-          -translate-y-1/2 whitespace-nowrap text-[#27272A]"
-        style={{
-          ...regularFont,
-
-          left: VIEW_ALL_BUTTON.textInset,
-
-          fontSize: VIEW_ALL_BUTTON.fontSize,
-
-          lineHeight: 1.07,
-
-          letterSpacing: "-0.04em",
-        }}
-      >
-        <span
-          className="block transition-transform duration-[650ms]
-
-            ease-[cubic-bezier(0.22,1,0.36,1)]
-
-            group-hover:translate-x-[var(--text-move)]"
-        >
-          View All
-        </span>
-      </span>
-
-      {/* CIRCLE */}
-
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 z-[3]
-
-          flex -translate-y-1/2 items-center justify-center
-
-          rounded-full
-
-          bg-[linear-gradient(180deg,#005EFF_0%,#001EA2_100%)]
-
-          left-[var(--circle-start)]
-
-          group-hover:left-[var(--circle-end)]
-
-          transition-[left] duration-[650ms]
-
-          ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{
-          width: VIEW_ALL_BUTTON.circleSize,
-
-          height: VIEW_ALL_BUTTON.circleSize,
-        }}
-      >
-        <FiArrowUpRight
-          size={px(20)}
-          strokeWidth={3.2}
-          className="scale-[0.8] text-white opacity-0
-
-            transition-[opacity,transform] duration-[350ms]
-
-            group-hover:scale-100 group-hover:opacity-100"
-        />
-      </span>
-    </Link>
+      scale={DESIGN.scale}
+      className="z-20"
+      style={{ position: "absolute", left: VIEW_ALL_BUTTON.left, top: VIEW_ALL_BUTTON.top }}
+    />
   );
 }
 

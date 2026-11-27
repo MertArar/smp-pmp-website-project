@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import GlassViewAllButton from "@/components/ui/GlassViewAllButton";
 import { useEffect, useRef } from "react";
 import type * as THREE from "three";
 import { gsap } from "@/lib/gsap";
@@ -18,22 +19,22 @@ import {
 // Tailwind classes stay next to the component; marker classes scope descendant variants.
 const SOCIAL_BACKGROUND = "linear-gradient(90deg, #d5eaf7 0%, #d1e8f6 48%, #c6e0f7 68%, #afcdf9 90%, #bbd7fc 100%)";
 const styles = {
-  "section": "tw-social-section isolate relative w-full [height:1460svh] [color:#434343]! [font-family:Arial,_Helvetica,_sans-serif] [@media(max-width:1023px)]:[height:1280svh] [@media(prefers-reduced-motion:reduce)]:[height:100svh]",
-  "viewport": "tw-social-viewport sticky [top:0] w-full [height:100svh] overflow-hidden [&[data-fallback='true']_.tw-social-grid]:visible [&[data-fallback='true']_.tw-social-divider]:[transform:scaleX(1)] [&[data-fallback='true']_.tw-social-ribbon]:invisible [&[data-fallback='true']_.tw-social-heading]:invisible [&[data-fallback='true']_.tw-social-guides]:invisible [&[data-fallback='true']_.tw-social-caption]:invisible [&[data-fallback='true']_.tw-social-grid]:[opacity:1]",
-  "stage": "tw-social-stage [--reference-scale:1] [--viewport-width:1904px] [--viewport-height:878px] [--design-x:calc((1904px_-_var(--viewport-width))_/_2_-_584px)] [--motion-x:calc((1904px_+_var(--viewport-width))_/_2_+_32px)] [--caption-opacity:1] [--grid-opacity:0] [--divider-progress:0] [--intro-offset:29px] absolute [left:50%] [top:50%] [width:1904px] [height:878px] [transform:translate(-50%,_-50%)_scale(var(--reference-scale))] [transform-origin:center] [&[data-settled='true']_.tw-social-grid]:visible",
-  "heading": "tw-social-heading m-0 [font-weight:400] [font-size:138px]! [line-height:1]! [letter-spacing:-8px] [@media(prefers-reduced-motion:reduce)]:hidden",
-  "design": "tw-social-design absolute [left:0] whitespace-nowrap [will-change:transform] [top:calc(239px_+_var(--intro-offset))] [transform:translate3d(var(--design-x),_0,_0)] [&_>_span]:block [&_>_span]:[width:max-content] [&_>_span]:[transform:scaleX(var(--title-width-scale,_1))] [&_>_span]:[transform-origin:left_center]",
-  "motion": "tw-social-motion absolute [left:0] whitespace-nowrap [will-change:transform] [top:calc(416px_+_var(--intro-offset))] [transform:translate3d(var(--motion-x),_0,_0)] [&_>_span]:block [&_>_span]:[width:max-content] [&_>_span]:[transform:scaleX(var(--title-width-scale,_1))] [&_>_span]:[transform-origin:left_center]",
+  "section": "tw-social-section isolate relative w-full [height:860svh] [color:#434343]! [font-family:var(--font-sf-pro),_sans-serif] [@media(max-width:1023px)]:[height:760svh] [@media(prefers-reduced-motion:reduce)]:[height:100svh]",
+  "viewport": "tw-social-viewport sticky [top:0] w-full [height:100svh] overflow-hidden [&[data-fallback='true']_.tw-social-grid]:visible [&[data-fallback='true']_.tw-social-grid]:pointer-events-auto [&[data-fallback='true']_.tw-social-divider]:[transform:scaleX(1)] [&[data-fallback='true']_.tw-social-ribbon]:invisible [&[data-fallback='true']_.tw-social-heading]:invisible [&[data-fallback='true']_.tw-social-guides]:invisible [&[data-fallback='true']_.tw-social-caption]:invisible [&[data-fallback='true']_.tw-social-grid]:[opacity:1]",
+  "stage": "tw-social-stage [--reference-scale:1] [--viewport-width:1904px] [--viewport-height:878px] [--design-x:calc((1904px_-_var(--viewport-width))_/_2_-_584px)] [--motion-x:calc((1904px_+_var(--viewport-width))_/_2_+_32px)] [--caption-opacity:1] [--divider-progress:0] [--intro-offset:29px] absolute [left:50%] [top:50%] [width:1904px] [height:878px] [transform:translate(-50%,_-50%)_scale(var(--reference-scale))] [transform-origin:center] [&[data-settled='true']_.tw-social-grid]:visible",
+  "heading": "tw-social-heading m-0 [font-weight:400] [font-size:138px]! [line-height:1]! [letter-spacing:-0.04em] [font-stretch:100%] [font-variation-settings:'wght'_400,_'wdth'_100] [@media(prefers-reduced-motion:reduce)]:hidden",
+  "design": "tw-social-design absolute [left:0] whitespace-nowrap [will-change:transform] [top:calc(239px_+_var(--intro-offset))] [transform:translate3d(var(--design-x),_0,_0)] [&_>_span]:block [&_>_span]:[width:max-content]",
+  "motion": "tw-social-motion absolute [left:0] whitespace-nowrap [will-change:transform] [top:calc(416px_+_var(--intro-offset))] [transform:translate3d(var(--motion-x),_0,_0)] [&_>_span]:block [&_>_span]:[width:max-content]",
   "caption": "tw-social-caption absolute [left:50%] [top:calc(387px_+_var(--intro-offset))] m-0 [transform:translateX(-50%)] [font-size:15px]! [line-height:16px]! [font-weight:400] text-center [opacity:var(--caption-opacity)] [@media(prefers-reduced-motion:reduce)]:hidden",
   "ribbon": "tw-social-ribbon absolute [left:calc((1904px_-_var(--viewport-width))_/_2)] [top:calc((878px_-_var(--viewport-height))_/_2)] [z-index:1] [width:var(--viewport-width)] [height:var(--viewport-height)] pointer-events-none [@media(prefers-reduced-motion:reduce)]:hidden",
   "guides": "tw-social-guides absolute inset-0 w-full h-full pointer-events-none [fill:none] [stroke:#434343] [stroke-width:0.5px] [opacity:0.2] [&_path]:[opacity:0] [@media(prefers-reduced-motion:reduce)]:hidden",
-  "grid": "tw-social-grid absolute [scale:var(--grid-scale,1)] [left:335px] [top:107px] [z-index:2] grid [grid-template-columns:repeat(3,_406px)] [grid-template-rows:repeat(2,_283px)] [column-gap:16px] [row-gap:25px] [opacity:var(--grid-opacity)] invisible pointer-events-none [@media(max-width:1023px)]:[left:54px] [@media(max-width:1023px)]:[top:-517px] [@media(max-width:1023px)]:[grid-template-columns:repeat(2,_880px)] [@media(max-width:1023px)]:[grid-template-rows:repeat(3,_616px)] [@media(max-width:1023px)]:[gap:32px_36px] [@media(prefers-reduced-motion:reduce)]:[opacity:1] [@media(prefers-reduced-motion:reduce)]:visible",
-  "card": "tw-social-card m-0 overflow-hidden [border-radius:8px] [@media(max-width:1023px)]:[border-radius:24px]",
+  "grid": "tw-social-grid absolute [scale:var(--grid-scale,1)] [left:335px] [top:107px] [z-index:2] grid [grid-template-columns:repeat(3,_406px)] [grid-template-rows:repeat(2,_283px)] [column-gap:16px] [row-gap:25px] [opacity:0] invisible pointer-events-none [@media(max-width:1023px)]:[left:54px] [@media(max-width:1023px)]:[top:-517px] [@media(max-width:1023px)]:[grid-template-columns:repeat(2,_880px)] [@media(max-width:1023px)]:[grid-template-rows:repeat(3,_616px)] [@media(max-width:1023px)]:[gap:32px_36px] [@media(prefers-reduced-motion:reduce)]:[opacity:1] [@media(prefers-reduced-motion:reduce)]:visible [@media(prefers-reduced-motion:reduce)]:pointer-events-auto",
+  "card": "tw-social-card m-0 overflow-hidden [border-radius:8px] [transition:transform_450ms_cubic-bezier(0.22,1,0.36,1),box-shadow_450ms_ease] [@media(hover:hover)_and_(pointer:fine)]:hover:[transform:translateY(-4px)_scale(1.04)] [@media(hover:hover)_and_(pointer:fine)]:hover:[box-shadow:0_12px_30px_#234e7226] motion-reduce:transition-none motion-reduce:hover:transform-none [@media(max-width:1023px)]:[border-radius:24px]",
   "divider": "tw-social-divider absolute [left:37px] [right:37px] [top:402.5px] [height:1px] [background:rgba(67,_67,_67,_0.16)] [transform:scaleX(var(--divider-progress))] [transform-origin:left_center] pointer-events-none [@media(max-width:1023px)]:[left:100px] [@media(max-width:1023px)]:[right:100px] [@media(max-width:1023px)]:[top:calc(439px_-_324px_*_var(--grid-scale,1))] [@media(prefers-reduced-motion:reduce)]:[transform:scaleX(1)]",
   "secondDivider": "tw-social-secondDivider hidden [@media(max-width:1023px)]:block [@media(max-width:1023px)]:[top:calc(439px_+_324px_*_var(--grid-scale,1))]",
   "artwork": "tw-social-artwork w-full h-full object-cover",
   "description": "tw-social-description absolute [left:37px] [top:calc(740px_+_var(--intro-offset))] [z-index:3] m-0 [font-size:17px]! [line-height:20px]! [letter-spacing:-0.65px] [font-weight:400] [@media(max-width:1023px)]:[left:100px] [@media(max-width:1023px)]:[top:calc(439px_-_var(--viewport-height)_/_2_+_36px_/_var(--reference-scale))] [@media(max-width:1023px)]:[font-size:calc(11px_/_var(--reference-scale))]! [@media(max-width:1023px)]:[line-height:1.2]! [@media(max-width:1023px)]:[letter-spacing:0]",
-  "dribbble": "tw-social-dribbble absolute [right:37px] [top:calc(770px_+_var(--intro-offset))] [z-index:3] flex items-center justify-between [width:167px] [padding-bottom:9px] [border-bottom:1px_solid_#686868] [font-family:'Courier_New',_Courier,_monospace] [font-size:14px]! [line-height:20px]! [&:focus-visible]:[outline:2px_solid_#434343] [&:focus-visible]:[outline-offset:6px] [&:hover_>_span:last-child]:[transform:translateX(3px)] [@media(max-width:1023px)]:[left:100px] [@media(max-width:1023px)]:[right:auto] [@media(max-width:1023px)]:[top:calc(439px_+_var(--viewport-height)_/_2_-_65px_/_var(--reference-scale))] [@media(max-width:1023px)]:[width:calc(160px_/_var(--reference-scale))] [@media(max-width:1023px)]:[font-size:calc(11px_/_var(--reference-scale))]! [@media(max-width:1023px)]:[line-height:1.2]! [@media(max-width:1023px)]:[padding-bottom:calc(7px_/_var(--reference-scale))] [@media(max-width:1023px)]:[border-width:calc(1px_/_var(--reference-scale))]",
+  "viewAll": "absolute [right:37px] [top:calc(770px_+_var(--intro-offset))] [z-index:3] [@media(max-width:1023px)]:[left:100px] [@media(max-width:1023px)]:[right:auto] [@media(max-width:1023px)]:[top:calc(439px_+_var(--viewport-height)_/_2_-_65px_/_var(--reference-scale))] [@media(max-width:1023px)]:[transform:scale(calc(0.75_/_var(--reference-scale)))] [transform-origin:top_left]",
 } as const;
 
 
@@ -232,11 +233,15 @@ function findInterval<T extends { t: number }>(
   return [samples[Math.max(0, lo - 1)], samples[lo]];
 }
 
-function titlePositions(progress: number, frameWidth = DESIGN_WIDTH) {
+function titlePositions(progress: number, frameWidth: number, designWidth: number, motionWidth: number) {
   const left = (DESIGN_WIDTH - frameWidth) / 2;
   const right = left + frameWidth;
-  const distance = frameWidth + 584;
-  return [left - 552 + distance * progress, right - distance * progress] as const;
+  // Measure natural text widths so both titles keep identical letter shapes
+  // and spacing while each word still clears the viewport completely.
+  return [
+    mix(left - designWidth - 32, right + 32, progress),
+    mix(right + 32, left - motionWidth - 32, progress),
+  ] as const;
 }
 
 function ribbonExitTravel(frameHeight: number) {
@@ -438,7 +443,7 @@ function updatePanel(panel: Panel, progress: number, mobile: boolean, frameHeigh
   panel.geometryProgress = progress;
   panel.geometryFrameHeight = frameHeight;
   }
-  const scale = 1 + (panel.hover ?? 0) * 0.06;
+  const scale = 1 + (panel.hover ?? 0) * 0.04;
   mesh.scale.setScalar(scale);
   if (scale !== 1) {
     geometry.computeBoundingBox();
@@ -446,7 +451,7 @@ function updatePanel(panel: Panel, progress: number, mobile: boolean, frameHeigh
     mesh.position.set(
       (center.min.x + center.max.x) * 0.5 * (1 - scale),
       (center.min.y + center.max.y) * 0.5 * (1 - scale),
-      (center.min.z + center.max.z) * 0.5 * (1 - scale) + (panel.hover ?? 0) * 12,
+      (center.min.z + center.max.z) * 0.5 * (1 - scale) + (panel.hover ?? 0) * 8,
     );
   } else mesh.position.set(0, 0, 0);
 
@@ -502,6 +507,8 @@ export default function SocialMedia() {
     const textures: THREE.Texture[] = [];
     let frameHeight = BASE_HEIGHT;
     let frameWidth = DESIGN_WIDTH;
+    let designTitleWidth = 552;
+    let motionTitleWidth = 480;
     let raycaster: THREE.Raycaster | undefined;
     let pointer: THREE.Vector2 | undefined;
     let pointerInside = false;
@@ -543,19 +550,8 @@ export default function SocialMedia() {
         camera.updateProjectionMatrix();
       }
 
-      if (designRef.current && designRef.current.offsetWidth > 0) {
-        designRef.current.style.setProperty(
-          "--title-width-scale",
-          String((mobileRibbon ? 900 : 552) / designRef.current.offsetWidth),
-        );
-      }
-
-      if (motionRef.current && motionRef.current.offsetWidth > 0) {
-        motionRef.current.style.setProperty(
-          "--title-width-scale",
-          String((mobileRibbon ? 1160 : 480) / motionRef.current.offsetWidth),
-        );
-      }
+      designTitleWidth = designRef.current?.offsetWidth || designTitleWidth;
+      motionTitleWidth = motionRef.current?.offsetWidth || motionTitleWidth;
 
       if (renderer) {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -614,12 +610,12 @@ export default function SocialMedia() {
       // The first card peeks out just before the titles meet. Keep the titles
       // travelling through the scene until the ribbon's final departure.
       const time = current * 5.85;
-      const [designX, motionX] = titlePositions(current, frameWidth);
+      const [designX, motionX] = titlePositions(current, frameWidth, designTitleWidth, motionTitleWidth);
       // Continue each title in its original direction until its complete
       // enlarged mobile word has cleared the viewport. Never fade the text.
       const titleExit = mobileRibbon ? smoothstep((current - .23) / .13) : 0;
       const designExit = mobileRibbon ? mix(designX, frameWidth / 2 + DESIGN_WIDTH / 2 + 100, titleExit) : designX;
-      const motionExit = mobileRibbon ? mix(motionX, (DESIGN_WIDTH - frameWidth) / 2 - 1260, titleExit) : motionX;
+      const motionExit = mobileRibbon ? mix(motionX, (DESIGN_WIDTH - frameWidth) / 2 - motionTitleWidth - 100, titleExit) : motionX;
 
       stage.style.setProperty("--design-x", `${designExit}px`);
 
@@ -642,19 +638,15 @@ export default function SocialMedia() {
       const lastSettledAt = arrivalPanels.length === 6 && arrivalPanels.every(panel => panel.settledAt !== undefined)
         ? Math.max(...arrivalPanels.map(panel => panel.settledAt!))
         : undefined;
-      const tailComplete = lastSettledAt === undefined ? 0 : smoothstep((gsap.ticker.time - lastSettledAt - 1) / 0.2);
-      const gridOpacity = reducedMotion ? 1 : smoothstep((Math.min(current, arrivalProgress) - 0.997) / 0.003) * tailComplete;
-      stage.style.setProperty("--scroll-progress", String(current));
-
-      stage.style.setProperty("--grid-opacity", String(gridOpacity));
-
-      canvas.style.opacity = String(reducedMotion ? 0 : 1 - gridOpacity);
-
-      stage.dataset.settled = String(gridOpacity > 0);
+      // Keep the final cards on the same canvas. Crossfading two copies of
+      // the grid briefly exposed the background and caused a brightness flash.
+      // The transparent DOM grid still exposes image descriptions once settled;
+      // reduced-motion and WebGL fallback modes display that grid directly.
+      stage.dataset.settled = String(lastSettledAt !== undefined);
 
       paintGuides(time);
 
-      if (renderer && scene && camera && !reducedMotion && gridOpacity < 1) {
+      if (renderer && scene && camera && !reducedMotion) {
         for (const panel of panels) {
           if (panel.kind) {
             const size = panel.mesh.material.userData.cardSize as THREE.Vector2;
@@ -686,15 +678,21 @@ export default function SocialMedia() {
         if (needsPaint) { needsPaint = false; paint(); }
         return;
       }
-      if (pointerInside && pointer && raycaster && current < 0.72 && (pointerDirty || needsPaint)) {
+      if (pointerInside && pointer && raycaster && (pointerDirty || needsPaint)) {
         pointerDirty = false;
         scene.updateMatrixWorld(true);
         raycaster.setFromCamera(pointer, camera);
-        // Frustum culling is disabled; bounds are only needed for pointer hits.
-        panels.forEach(panel => { if (!panel.kind) panel.mesh.geometry.computeBoundingSphere(); });
-        const hit = raycaster.intersectObjects(panels.filter(panel => !panel.kind).map(panel => panel.mesh))[0];
-        hovered = panels.find(panel => panel.mesh === hit?.object);
-      } else if (!pointerInside || current >= 0.72) hovered = undefined;
+        // Every visible card can respond, including cards still arriving.
+        // Hover caches a bounding box; refresh it as well as the sphere after
+        // deformation so an old box cannot reject hits on the current card.
+        const interactivePanels = panels.filter(panel => panel.mesh.visible);
+        interactivePanels.forEach(({ mesh }) => {
+          mesh.geometry.computeBoundingBox();
+          mesh.geometry.computeBoundingSphere();
+        });
+        const hit = raycaster.intersectObjects(interactivePanels.map(panel => panel.mesh))[0];
+        hovered = interactivePanels.find(panel => panel.mesh === hit?.object);
+      } else if (!pointerInside) hovered = undefined;
       const easing = 1 - Math.exp(-Math.min(delta, 64) / 260);
       let changing = false;
       for (const panel of panels) {
@@ -712,17 +710,17 @@ export default function SocialMedia() {
 
     const readScroll = () => {
       // Titles start gently once the section fills a fifth of the viewport.
-      // Keep title/ribbon timing intact; give arriving cards two extra viewports
-      // to settle, then retain the final two-viewport hold.
+      // Share a shorter timeline, with half a viewport for card arrivals and
+      // only a quarter viewport of hold before the section scrolls away.
       const travelled = motionState.progress * sectionHeight - viewportHeight;
-      const animationDistance = Math.max(1, sectionHeight - viewportHeight * 5) + viewportHeight * 0.8;
+      const animationDistance = Math.max(1, sectionHeight - viewportHeight * 1.75) + viewportHeight * 0.8;
       const rawProgress = (travelled + viewportHeight * 0.8) / animationDistance;
       const arrivalStart = gridArrivalStart(finalRibbonTravel);
       const arrivalSpan = 1 - arrivalStart;
       current = reducedMotion ? 1 : clamp(rawProgress);
       arrivalProgress = reducedMotion ? 1 : clamp(rawProgress <= arrivalStart
         ? rawProgress
-        : arrivalStart + (rawProgress - arrivalStart) * arrivalSpan / (arrivalSpan + viewportHeight * 2 / animationDistance));
+        : arrivalStart + (rawProgress - arrivalStart) * arrivalSpan / (arrivalSpan + viewportHeight * 0.5 / animationDistance));
       schedule();
     };
 
@@ -740,7 +738,7 @@ export default function SocialMedia() {
           end: "bottom bottom",
           // Smooth the shared timeline too: titles and ribbon keep gliding
           // towards the scroll target after input stops, in either direction.
-          scrub: 2,
+          scrub: 1,
           invalidateOnRefresh: true,
         },
       });
@@ -1071,15 +1069,15 @@ export default function SocialMedia() {
             our creative process.
           </p>
 
-          <a
-            className={styles.dribbble}
-            href="https://dribbble.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>VIEW ON DRIBBBLE</span>
-            <span aria-hidden="true">→</span>
-          </a>
+          <div className={styles.viewAll}>
+            <GlassViewAllButton
+              href="https://dribbble.com/"
+              aria-label="View all on Dribbble"
+              scale={4 / 3}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </div>
         </div>
       </div>
     </section>
